@@ -1,0 +1,9 @@
+<resources>
+    <string name="app_name">dummy phone</string>
+    <string name="settings">Settings</string>
+    <string name="set_default">Set as Default</string>
+    <string name="current_default_launcher">Current default launcher:</string>
+    <string name="set_as_default_launcher">Set as Default Launcher</string>
+    <string name="go_to_lock_settings">Go to Lock Settings</string>
+    <string name="save_app_selection">Save App Selection</string>
+</resources>
