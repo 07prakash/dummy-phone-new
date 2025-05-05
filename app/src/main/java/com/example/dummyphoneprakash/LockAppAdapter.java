@@ -4,8 +4,10 @@ package com.example.dummyphoneprakash;
 
 
 
+
 import android.content.pm.PackageManager;
 import android.content.pm.ResolveInfo;
+import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
@@ -19,17 +21,9 @@ import java.util.List;
 import java.util.Set;
 
 public class LockAppAdapter extends RecyclerView.Adapter<LockAppAdapter.AppViewHolder> {
-
-    public interface AppSelectionListener {
-        void onAppSelectionChanged(String packageName, boolean isSelected);
-    }
-
     private final List<ResolveInfo> apps;
-    private final PackageManager packageManager;
+    private final PackageManager pm;
     private final Set<String> essentialApps;
-    private final AppSelectionListener selectionListener;
-
-    // Track all selected states
     private final Set<String> selectedPackages = new HashSet<>();
     private final Set<String> disabledEssentialPackages = new HashSet<>();
 
@@ -37,16 +31,15 @@ public class LockAppAdapter extends RecyclerView.Adapter<LockAppAdapter.AppViewH
                           PackageManager pm,
                           Set<String> initiallySelectedRegularApps,
                           Set<String> initiallyDisabledEssentialApps,
-                          Set<String> essentialApps,
-                          AppSelectionListener listener) {
+                          Set<String> essentialApps) {
         this.apps = apps;
-        this.packageManager = pm;
+        this.pm = pm;
         this.essentialApps = essentialApps;
-        this.selectionListener = listener;
-
-        // Initialize selections
         this.selectedPackages.addAll(initiallySelectedRegularApps);
         this.disabledEssentialPackages.addAll(initiallyDisabledEssentialApps);
+
+        Log.d("LockAdapter", "Initialized with " + selectedPackages.size() + " regular and "
+                + disabledEssentialPackages.size() + " disabled essential apps");
     }
 
     @NonNull
@@ -59,36 +52,40 @@ public class LockAppAdapter extends RecyclerView.Adapter<LockAppAdapter.AppViewH
 
     @Override
     public void onBindViewHolder(@NonNull AppViewHolder holder, int position) {
-        ResolveInfo appInfo = apps.get(position);
-        String packageName = appInfo.activityInfo.packageName;
+        ResolveInfo app = apps.get(position);
+        String packageName = app.activityInfo.packageName;
         boolean isEssential = essentialApps.contains(packageName);
-
-        // Determine if this app should be checked
         boolean isChecked = isEssential ?
                 !disabledEssentialPackages.contains(packageName) :
                 selectedPackages.contains(packageName);
 
-        holder.bind(appInfo, packageManager, isChecked, isEssential, (pkgName, checked) -> {
+        holder.bind(app, pm, isChecked, isEssential, (pkgName, checked) -> {
             if (isEssential) {
                 if (checked) {
                     disabledEssentialPackages.remove(pkgName);
                 } else {
                     disabledEssentialPackages.add(pkgName);
                 }
+                Log.d("LockAdapter", "Essential app " + pkgName + " " + (checked ? "enabled" : "disabled"));
             } else {
                 if (checked) {
                     selectedPackages.add(pkgName);
                 } else {
                     selectedPackages.remove(pkgName);
                 }
+                Log.d("LockAdapter", "Regular app " + pkgName + " " + (checked ? "selected" : "deselected"));
             }
-            selectionListener.onAppSelectionChanged(pkgName, checked);
         });
     }
 
     @Override
     public int getItemCount() {
         return apps.size();
+    }
+
+    @Override
+    public long getItemId(int position) {
+        return apps.get(position).activityInfo.packageName.hashCode();
     }
 
     public Set<String> getSelectedRegularApps() {
@@ -111,31 +108,28 @@ public class LockAppAdapter extends RecyclerView.Adapter<LockAppAdapter.AppViewH
             checkBox = itemView.findViewById(R.id.appCheckBox);
         }
 
-        void bind(ResolveInfo appInfo,
-                  PackageManager pm,
-                  boolean isChecked,
-                  boolean isEssential,
-                  AppSelectionListener listener) {
+        void bind(ResolveInfo app, PackageManager pm,
+                  boolean isChecked, boolean isEssential,
+                  OnCheckedChangeListener listener) {
+            String packageName = app.activityInfo.packageName;
 
-            String packageName = appInfo.activityInfo.packageName;
+            appIcon.setImageDrawable(app.loadIcon(pm));
+            appName.setText(app.loadLabel(pm));
 
-            // Set app info
-            appIcon.setImageDrawable(appInfo.loadIcon(pm));
-            appName.setText(appInfo.loadLabel(pm));
-
-            // Clear previous listener to avoid duplicate triggers
             checkBox.setOnCheckedChangeListener(null);
             checkBox.setChecked(isChecked);
 
-            // Visual styling for essential apps
             float alpha = isEssential ? 0.9f : 1.0f;
             appIcon.setAlpha(alpha);
             appName.setAlpha(alpha);
 
-            // Set new listener
             checkBox.setOnCheckedChangeListener((buttonView, checked) -> {
-                listener.onAppSelectionChanged(packageName, checked);
+                listener.onCheckedChanged(packageName, checked);
             });
         }
     }
- }
+
+    interface OnCheckedChangeListener {
+        void onCheckedChanged(String packageName, boolean isChecked);
+    }
+}

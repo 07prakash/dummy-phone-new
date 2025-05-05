@@ -3,8 +3,11 @@ package com.example.dummyphoneprakash;
 
 
 
+
+
 import android.content.Context;
 import android.content.SharedPreferences;
+import android.util.Log;
 import java.util.HashSet;
 import java.util.Set;
 
@@ -46,13 +49,18 @@ public class SharedPreferencesHelper {
         editor.putStringSet(KEY_ALLOWED_APPS, new HashSet<>(allowedRegularApps));
         editor.putStringSet(KEY_DISABLED_ESSENTIALS, new HashSet<>(disabledEssentialApps));
         editor.apply();
+
+        Log.d("Prefs", "Saved regular apps: " + allowedRegularApps);
+        Log.d("Prefs", "Saved disabled essentials: " + disabledEssentialApps);
     }
 
     public boolean isAppAllowed(String packageName) {
-        if (ESSENTIAL_APPS.contains(packageName)) {
-            return !getDisabledEssentialApps().contains(packageName);
-        }
         Set<String> allowed = getAllowedRegularApps();
+        Set<String> disabledEssentials = getDisabledEssentialApps();
+
+        if (isEssentialApp(packageName)) {
+            return !disabledEssentials.contains(packageName);
+        }
         return allowed.isEmpty() || allowed.contains(packageName);
     }
 
