@@ -11,66 +11,52 @@ import java.util.Set;
 public class SharedPreferencesHelper {
     private static final String PREFS_NAME = "AppLauncherPrefs";
     private static final String KEY_ALLOWED_APPS = "allowed_apps";
+    private static final String KEY_DISABLED_ESSENTIALS = "disabled_essentials";
 
-    // Essential apps that should always be enabled
     private static final Set<String> ESSENTIAL_APPS = new HashSet<String>() {{
-        add("com.android.dialer");         // Default dialer
-        add("com.android.contacts");       // Contacts
-        add("com.android.mms");            // Messaging
-        add("com.google.android.dialer");  // Google Dialer
-        add("com.google.android.apps.messaging"); // Google Messages
-        add("com.samsung.android.dialer"); // Samsung Dialer
-        add("com.samsung.android.messaging"); // Samsung Messages
+        add("com.android.dialer");
+        add("com.android.contacts");
+        add("com.android.mms");
+        add("com.google.android.dialer");
+        add("com.google.android.apps.messaging");
+        add("com.samsung.android.dialer");
+        add("com.samsung.android.messaging");
     }};
 
-    private final SharedPreferences sharedPreferences;
+    private final SharedPreferences prefs;
 
     public SharedPreferencesHelper(Context context) {
-        sharedPreferences = context.getSharedPreferences(PREFS_NAME, Context.MODE_PRIVATE);
-    }
-
-    public Set<String> getAllowedApps() {
-        return new HashSet<>(sharedPreferences.getStringSet(KEY_ALLOWED_APPS, new HashSet<>()));
-    }
-
-    public void setAllowedApps(Set<String> packageNames) {
-        SharedPreferences.Editor editor = sharedPreferences.edit();
-        editor.putStringSet(KEY_ALLOWED_APPS, new HashSet<>(packageNames));
-        editor.apply();
-    }
-
-    public boolean isAppAllowed(String packageName) {
-        Set<String> allowedApps = getAllowedApps();
-        return isEssentialApp(packageName) || allowedApps.isEmpty() || allowedApps.contains(packageName);
-    }
-
-    public boolean isEssentialApp(String packageName) {
-        return ESSENTIAL_APPS.contains(packageName);
+        prefs = context.getSharedPreferences(PREFS_NAME, Context.MODE_PRIVATE);
     }
 
     public Set<String> getEssentialApps() {
         return new HashSet<>(ESSENTIAL_APPS);
     }
 
-    public void allowApp(String packageName) {
-        Set<String> allowedApps = getAllowedApps();
-        allowedApps.add(packageName);
-        setAllowedApps(allowedApps);
+    public Set<String> getAllowedRegularApps() {
+        return new HashSet<>(prefs.getStringSet(KEY_ALLOWED_APPS, new HashSet<>()));
     }
 
-    public void disallowApp(String packageName) {
-        if (!isEssentialApp(packageName)) {
-            Set<String> allowedApps = getAllowedApps();
-            allowedApps.remove(packageName);
-            setAllowedApps(allowedApps);
+    public Set<String> getDisabledEssentialApps() {
+        return new HashSet<>(prefs.getStringSet(KEY_DISABLED_ESSENTIALS, new HashSet<>()));
+    }
+
+    public void saveSelections(Set<String> allowedRegularApps, Set<String> disabledEssentialApps) {
+        SharedPreferences.Editor editor = prefs.edit();
+        editor.putStringSet(KEY_ALLOWED_APPS, new HashSet<>(allowedRegularApps));
+        editor.putStringSet(KEY_DISABLED_ESSENTIALS, new HashSet<>(disabledEssentialApps));
+        editor.apply();
+    }
+
+    public boolean isAppAllowed(String packageName) {
+        if (ESSENTIAL_APPS.contains(packageName)) {
+            return !getDisabledEssentialApps().contains(packageName);
         }
+        Set<String> allowed = getAllowedRegularApps();
+        return allowed.isEmpty() || allowed.contains(packageName);
     }
 
-    public void clearAllRestrictions() {
-        setAllowedApps(new HashSet<>());
-    }
-
-    public boolean isLockingEnabled() {
-        return !getAllowedApps().isEmpty();
+    public boolean isEssentialApp(String packageName) {
+        return ESSENTIAL_APPS.contains(packageName);
     }
 }

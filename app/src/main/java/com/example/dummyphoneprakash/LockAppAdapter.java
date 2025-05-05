@@ -14,29 +14,39 @@ import android.widget.ImageView;
 import android.widget.TextView;
 import androidx.annotation.NonNull;
 import androidx.recyclerview.widget.RecyclerView;
+import java.util.HashSet;
 import java.util.List;
 import java.util.Set;
 
 public class LockAppAdapter extends RecyclerView.Adapter<LockAppAdapter.AppViewHolder> {
 
-    private final List<ResolveInfo> apps;
-    private final PackageManager pm;
-    private final Set<String> selectedApps;
-    private final Set<String> essentialApps;
-    private final OnAppCheckedListener listener;
-
-    public interface OnAppCheckedListener {
-        void onAppChecked(String packageName, boolean isChecked);
+    public interface AppSelectionListener {
+        void onAppSelectionChanged(String packageName, boolean isSelected);
     }
 
-    public LockAppAdapter(List<ResolveInfo> apps, PackageManager pm,
-                          Set<String> selectedApps, Set<String> essentialApps,
-                          OnAppCheckedListener listener) {
+    private final List<ResolveInfo> apps;
+    private final PackageManager packageManager;
+    private final Set<String> essentialApps;
+    private final AppSelectionListener selectionListener;
+
+    // Track all selected states
+    private final Set<String> selectedPackages = new HashSet<>();
+    private final Set<String> disabledEssentialPackages = new HashSet<>();
+
+    public LockAppAdapter(List<ResolveInfo> apps,
+                          PackageManager pm,
+                          Set<String> initiallySelectedRegularApps,
+                          Set<String> initiallyDisabledEssentialApps,
+                          Set<String> essentialApps,
+                          AppSelectionListener listener) {
         this.apps = apps;
-        this.pm = pm;
-        this.selectedApps = selectedApps;
+        this.packageManager = pm;
         this.essentialApps = essentialApps;
-        this.listener = listener;
+        this.selectionListener = listener;
+
+        // Initialize selections
+        this.selectedPackages.addAll(initiallySelectedRegularApps);
+        this.disabledEssentialPackages.addAll(initiallyDisabledEssentialApps);
     }
 
     @NonNull
@@ -49,12 +59,31 @@ public class LockAppAdapter extends RecyclerView.Adapter<LockAppAdapter.AppViewH
 
     @Override
     public void onBindViewHolder(@NonNull AppViewHolder holder, int position) {
-        ResolveInfo app = apps.get(position);
-        String packageName = app.activityInfo.packageName;
+        ResolveInfo appInfo = apps.get(position);
+        String packageName = appInfo.activityInfo.packageName;
         boolean isEssential = essentialApps.contains(packageName);
-        boolean isChecked = selectedApps.contains(packageName);
 
-        holder.bind(app, pm, isChecked, isEssential, listener);
+        // Determine if this app should be checked
+        boolean isChecked = isEssential ?
+                !disabledEssentialPackages.contains(packageName) :
+                selectedPackages.contains(packageName);
+
+        holder.bind(appInfo, packageManager, isChecked, isEssential, (pkgName, checked) -> {
+            if (isEssential) {
+                if (checked) {
+                    disabledEssentialPackages.remove(pkgName);
+                } else {
+                    disabledEssentialPackages.add(pkgName);
+                }
+            } else {
+                if (checked) {
+                    selectedPackages.add(pkgName);
+                } else {
+                    selectedPackages.remove(pkgName);
+                }
+            }
+            selectionListener.onAppSelectionChanged(pkgName, checked);
+        });
     }
 
     @Override
@@ -62,36 +91,51 @@ public class LockAppAdapter extends RecyclerView.Adapter<LockAppAdapter.AppViewH
         return apps.size();
     }
 
+    public Set<String> getSelectedRegularApps() {
+        return new HashSet<>(selectedPackages);
+    }
+
+    public Set<String> getDisabledEssentialApps() {
+        return new HashSet<>(disabledEssentialPackages);
+    }
+
     static class AppViewHolder extends RecyclerView.ViewHolder {
         private final ImageView appIcon;
         private final TextView appName;
         private final CheckBox checkBox;
 
-        public AppViewHolder(@NonNull View itemView) {
+        AppViewHolder(@NonNull View itemView) {
             super(itemView);
             appIcon = itemView.findViewById(R.id.appIcon);
             appName = itemView.findViewById(R.id.appName);
             checkBox = itemView.findViewById(R.id.appCheckBox);
         }
 
-        public void bind(ResolveInfo app, PackageManager pm,
-                         boolean isChecked, boolean isEssential,
-                         OnAppCheckedListener listener) {
-            appIcon.setImageDrawable(app.loadIcon(pm));
-            appName.setText(app.loadLabel(pm));
+        void bind(ResolveInfo appInfo,
+                  PackageManager pm,
+                  boolean isChecked,
+                  boolean isEssential,
+                  AppSelectionListener listener) {
+
+            String packageName = appInfo.activityInfo.packageName;
+
+            // Set app info
+            appIcon.setImageDrawable(appInfo.loadIcon(pm));
+            appName.setText(appInfo.loadLabel(pm));
+
+            // Clear previous listener to avoid duplicate triggers
+            checkBox.setOnCheckedChangeListener(null);
             checkBox.setChecked(isChecked);
 
-            // Disable interaction for essential apps
-            checkBox.setEnabled(!isEssential);
-            itemView.setAlpha(isEssential ? 0.7f : 1.0f);
+            // Visual styling for essential apps
+            float alpha = isEssential ? 0.9f : 1.0f;
+            appIcon.setAlpha(alpha);
+            appName.setAlpha(alpha);
 
-            if (!isEssential) {
-                checkBox.setOnCheckedChangeListener((buttonView, checked) -> {
-                    listener.onAppChecked(app.activityInfo.packageName, checked);
-                });
-            } else {
-                checkBox.setOnCheckedChangeListener(null);
-            }
+            // Set new listener
+            checkBox.setOnCheckedChangeListener((buttonView, checked) -> {
+                listener.onAppSelectionChanged(packageName, checked);
+            });
         }
     }
-}
+ }

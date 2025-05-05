@@ -1,6 +1,7 @@
 package com.example.dummyphoneprakash;
 
 
+
 import android.content.Intent;
 import android.content.pm.PackageManager;
 import android.content.pm.ResolveInfo;
@@ -13,12 +14,11 @@ import java.util.HashSet;
 import java.util.List;
 import java.util.Set;
 
-public class LockActivity extends AppCompatActivity implements LockAppAdapter.OnAppCheckedListener {
+public class LockActivity extends AppCompatActivity {
 
     private RecyclerView appsRecyclerView;
-    private Button lockButton;
-    private Set<String> selectedApps;
-    private Set<String> essentialApps;
+    private Button saveButton;
+    private LockAppAdapter adapter;
     private SharedPreferencesHelper prefsHelper;
 
     @Override
@@ -27,17 +27,12 @@ public class LockActivity extends AppCompatActivity implements LockAppAdapter.On
         setContentView(R.layout.activity_lock);
 
         prefsHelper = new SharedPreferencesHelper(this);
-        essentialApps = prefsHelper.getEssentialApps();
-        selectedApps = new HashSet<>(prefsHelper.getAllowedApps());
-
-        // Always include essential apps
-        selectedApps.addAll(essentialApps);
 
         appsRecyclerView = findViewById(R.id.appsRecyclerView);
-        lockButton = findViewById(R.id.lockButton);
+        saveButton = findViewById(R.id.lockButton);
 
         setupRecyclerView();
-        setupLockButton();
+        setupSaveButton();
     }
 
     private void setupRecyclerView() {
@@ -47,28 +42,31 @@ public class LockActivity extends AppCompatActivity implements LockAppAdapter.On
 
         List<ResolveInfo> apps = pm.queryIntentActivities(intent, 0);
 
+        adapter = new LockAppAdapter(
+                apps,
+                pm,
+                prefsHelper.getAllowedRegularApps(),
+                prefsHelper.getDisabledEssentialApps(),
+                prefsHelper.getEssentialApps(),
+                (packageName, isSelected) -> {
+                    // Selection changes are handled by the adapter
+                }
+        );
+
         appsRecyclerView.setLayoutManager(new LinearLayoutManager(this));
-        appsRecyclerView.setAdapter(new LockAppAdapter(
-                apps, pm, selectedApps, essentialApps, this));
+        appsRecyclerView.setAdapter(adapter);
     }
 
-    private void setupLockButton() {
-        lockButton.setOnClickListener(v -> {
-            prefsHelper.setAllowedApps(selectedApps);
+    private void setupSaveButton() {
+        saveButton.setOnClickListener(v -> {
+            // Get current selections from adapter
+            prefsHelper.saveSelections(
+                    adapter.getSelectedRegularApps(),
+                    adapter.getDisabledEssentialApps()
+            );
             startActivity(new Intent(this, HomeActivity.class));
             finish();
         });
-    }
-
-    @Override
-    public void onAppChecked(String packageName, boolean isChecked) {
-        if (!essentialApps.contains(packageName)) {
-            if (isChecked) {
-                selectedApps.add(packageName);
-            } else {
-                selectedApps.remove(packageName);
-            }
-        }
     }
 
     @Override
