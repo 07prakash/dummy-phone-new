@@ -38,6 +38,7 @@ dependencies {
     implementation libs.recyclerview
     implementation libs.material.v1100
     implementation libs.constraintlayout
+    implementation libs.preference
     testImplementation libs.junit
     androidTestImplementation libs.ext.junit
     androidTestImplementation libs.espresso.core

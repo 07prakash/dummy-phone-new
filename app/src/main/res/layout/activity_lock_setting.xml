@@ -1,4 +1,3 @@
-<?xml version="1.0" encoding="utf-8"?>
 <LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
     android:layout_width="match_parent"
     android:layout_height="match_parent"
@@ -6,6 +5,7 @@
     android:padding="24dp"
     android:gravity="center_horizontal">
 
+    <!-- These views show when NOT locked -->
     <Button
         android:id="@+id/chooseAppsBtn"
         android:layout_width="match_parent"
@@ -14,6 +14,7 @@
         android:layout_marginBottom="16dp"/>
 
     <TextView
+        android:id="@+id/lockDurationText"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
         android:text="Lock Duration:"
@@ -43,5 +44,15 @@
         android:backgroundTint="#FF0000"
         android:textColor="@android:color/white"
         android:textStyle="bold"/>
+
+    <!-- This view shows ONLY when locked -->
+    <Button
+        android:id="@+id/unlockBtn"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:text="UNLOCK"
+        android:backgroundTint="#4CAF50"
+        android:textColor="@android:color/white"
+        android:visibility="gone"/>
 
 </LinearLayout>

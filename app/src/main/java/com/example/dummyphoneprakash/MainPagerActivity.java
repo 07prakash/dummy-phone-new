@@ -2,13 +2,19 @@ package com.example.dummyphoneprakash;
 
 
 
+
+
+import android.content.ComponentName;
 import android.content.Intent;
+import android.content.IntentFilter;
+import android.content.pm.PackageManager;
 import android.os.Bundle;
 import androidx.appcompat.app.AppCompatActivity;
 import androidx.viewpager2.widget.ViewPager2;
+import java.util.ArrayList;
+import java.util.List;
 
 public class MainPagerActivity extends AppCompatActivity {
-
     private ViewPager2 viewPager;
 
     @Override
@@ -19,21 +25,43 @@ public class MainPagerActivity extends AppCompatActivity {
         viewPager = findViewById(R.id.viewPager);
         viewPager.setAdapter(new ViewPagerAdapter(this));
 
-        // Set default page (0 for Home, 1 for App Drawer)
-        int defaultPage = getIntent().getIntExtra("DEFAULT_PAGE", 0);
-        viewPager.setCurrentItem(defaultPage);
-
-        // Optional: disable swipe if needed
-        // viewPager.setUserInputEnabled(false);
+        // Check if we're the default launcher
+        if (isMyLauncherDefault()) {
+            viewPager.setCurrentItem(0); // Show HomeFragment
+        }
     }
 
     @Override
-    public void onBackPressed() {
-        if (viewPager.getCurrentItem() == 1) {
-            // If on app drawer, go back to home
-            viewPager.setCurrentItem(0);
-        } else {
-            super.onBackPressed();
+    protected void onNewIntent(Intent intent) {
+        super.onNewIntent(intent);
+        viewPager.setCurrentItem(0); // Always show HomeFragment when returning
+    }
+
+    @Override
+    protected void onResume() {
+        super.onResume();
+        if (isMyLauncherDefault()) {
+            viewPager.setCurrentItem(0); // Ensure HomeFragment is visible
         }
+    }
+
+    private boolean isMyLauncherDefault() {
+        final IntentFilter filter = new IntentFilter(Intent.ACTION_MAIN);
+        filter.addCategory(Intent.CATEGORY_HOME);
+        List<IntentFilter> filters = new ArrayList<>();
+        filters.add(filter);
+
+        final String myPackageName = getPackageName();
+        List<ComponentName> activities = new ArrayList<>();
+
+        PackageManager pm = getPackageManager();
+        pm.getPreferredActivities(filters, activities, null);
+
+        for (ComponentName activity : activities) {
+            if (myPackageName.equals(activity.getPackageName())) {
+                return true;
+            }
+        }
+        return false;
     }
 }
