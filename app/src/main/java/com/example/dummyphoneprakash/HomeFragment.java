@@ -34,7 +34,7 @@ public class HomeFragment extends Fragment {
         startTimeUpdates();
 
         lockSettingsButton.setOnClickListener(v -> {
-            startActivity(new Intent(getActivity(), LockActivity.class));
+            startActivity(new Intent(getActivity(), LockSettingActivity.class));
         });
 
         return view;

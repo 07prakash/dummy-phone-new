@@ -61,15 +61,14 @@ public class LockActivity extends AppCompatActivity {
 
     private void setupSaveButton() {
         saveButton.setOnClickListener(v -> {
-            Set<String> selectedRegular = adapter.getSelectedRegularApps();
-            Set<String> disabledEssential = adapter.getDisabledEssentialApps();
+            // 1. Get current selections from adapter
+            Set<String> selectedRegularApps = adapter.getSelectedRegularApps();
+            Set<String> disabledEssentialApps = adapter.getDisabledEssentialApps();
 
-            prefsHelper.saveSelections(selectedRegular, disabledEssential);
+            // 2. Save to SharedPreferences
+            prefsHelper.saveSelections(selectedRegularApps, disabledEssentialApps);
 
-            Log.d("LockActivity", "Saved selections - Regular: " + selectedRegular.size()
-                    + ", Disabled Essential: " + disabledEssential.size());
-
-            startActivity(new Intent(this, MainPagerActivity.class));
+            // 3. Close the activity
             finish();
         });
     }
