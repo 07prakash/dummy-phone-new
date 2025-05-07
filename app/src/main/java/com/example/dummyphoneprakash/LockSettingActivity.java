@@ -1,11 +1,13 @@
 package com.example.dummyphoneprakash;
 
+import android.app.ActivityManager;
 import android.app.TimePickerDialog;
 import android.content.ComponentName;
 import android.content.Intent;
 import android.content.IntentFilter;
 import android.content.SharedPreferences;
 import android.content.pm.PackageManager;
+import android.os.Build;
 import android.os.Bundle;
 import android.view.View;
 import android.widget.Button;
@@ -70,7 +72,8 @@ public class LockSettingActivity extends AppCompatActivity {
                 Intent homeSettingsIntent = new Intent(android.provider.Settings.ACTION_HOME_SETTINGS);
                 startActivity(homeSettingsIntent);
             }
-
+// Remove from recent apps
+            removeFromRecentApps();
             // Reset form and finish
             resetForm();
             finish();
@@ -96,6 +99,19 @@ public class LockSettingActivity extends AppCompatActivity {
 
         // Update UI based on current state
         updateUI();
+    }
+
+//    Remove from recent apps method
+    private void removeFromRecentApps() {
+        if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.LOLLIPOP) {
+            ActivityManager am = (ActivityManager) getSystemService(ACTIVITY_SERVICE);
+            if (am != null) {
+                List<ActivityManager.AppTask> tasks = am.getAppTasks();
+                if (tasks != null && !tasks.isEmpty()) {
+                    tasks.get(0).setExcludeFromRecents(true);
+                }
+            }
+        }
     }
 
     private boolean isMyLauncherDefault() {
