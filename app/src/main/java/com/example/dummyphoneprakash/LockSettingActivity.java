@@ -1,10 +1,11 @@
 package com.example.dummyphoneprakash;
 
-
-
 import android.app.TimePickerDialog;
+import android.content.ComponentName;
 import android.content.Intent;
+import android.content.IntentFilter;
 import android.content.SharedPreferences;
+import android.content.pm.PackageManager;
 import android.os.Bundle;
 import android.view.View;
 import android.widget.Button;
@@ -13,6 +14,8 @@ import android.widget.TimePicker;
 import androidx.appcompat.app.AppCompatActivity;
 import androidx.cardview.widget.CardView;
 import androidx.preference.PreferenceManager;
+import java.util.ArrayList;
+import java.util.List;
 import java.util.Locale;
 
 public class LockSettingActivity extends AppCompatActivity {
@@ -62,9 +65,11 @@ public class LockSettingActivity extends AppCompatActivity {
                     .putBoolean("is_locked", true)
                     .apply();
 
-            // Open launcher selection
-            Intent homeSettingsIntent = new Intent(android.provider.Settings.ACTION_HOME_SETTINGS);
-            startActivity(homeSettingsIntent);
+            if (!isMyLauncherDefault()) {
+                // Only open launcher selection if not default launcher
+                Intent homeSettingsIntent = new Intent(android.provider.Settings.ACTION_HOME_SETTINGS);
+                startActivity(homeSettingsIntent);
+            }
 
             // Reset form and finish
             resetForm();
@@ -91,6 +96,26 @@ public class LockSettingActivity extends AppCompatActivity {
 
         // Update UI based on current state
         updateUI();
+    }
+
+    private boolean isMyLauncherDefault() {
+        final IntentFilter filter = new IntentFilter(Intent.ACTION_MAIN);
+        filter.addCategory(Intent.CATEGORY_HOME);
+        List<IntentFilter> filters = new ArrayList<>();
+        filters.add(filter);
+
+        final String myPackageName = getPackageName();
+        List<ComponentName> activities = new ArrayList<>();
+
+        PackageManager pm = getPackageManager();
+        pm.getPreferredActivities(filters, activities, null);
+
+        for (ComponentName activity : activities) {
+            if (myPackageName.equals(activity.getPackageName())) {
+                return true;
+            }
+        }
+        return false;
     }
 
     private void resetForm() {
