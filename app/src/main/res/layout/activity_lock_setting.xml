@@ -1,11 +1,13 @@
+<?xml version="1.0" encoding="utf-8"?>
 <LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
     android:layout_width="match_parent"
     android:layout_height="match_parent"
     android:orientation="vertical"
     android:padding="24dp"
     android:gravity="center_horizontal">
 
-    <!-- These views show when NOT locked -->
+    <!-- Existing views remain the same -->
     <Button
         android:id="@+id/chooseAppsBtn"
         android:layout_width="match_parent"
@@ -45,7 +47,39 @@
         android:textColor="@android:color/white"
         android:textStyle="bold"/>
 
-    <!-- This view shows ONLY when locked -->
+    <!-- New CardView -->
+    <androidx.cardview.widget.CardView
+        android:id="@+id/exitCardView"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:layout_marginTop="24dp"
+        app:cardCornerRadius="8dp"
+        app:cardElevation="4dp"
+        app:cardUseCompatPadding="true">
+
+        <LinearLayout
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:orientation="vertical"
+            android:padding="16dp">
+
+            <TextView
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:text="After the time ends, what to exit?"
+                android:textSize="16sp"
+                android:layout_marginBottom="16dp"/>
+
+            <Button
+                android:id="@+id/exitBtn"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:text="Exit"
+                android:layout_gravity="end"/>
+        </LinearLayout>
+    </androidx.cardview.widget.CardView>
+
+    <!-- Unlock button (existing) -->
     <Button
         android:id="@+id/unlockBtn"
         android:layout_width="match_parent"

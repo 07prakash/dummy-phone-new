@@ -2,9 +2,6 @@ package com.example.dummyphoneprakash;
 
 
 
-
-import static androidx.core.content.ContextCompat.startActivity;
-
 import android.app.TimePickerDialog;
 import android.content.Intent;
 import android.content.SharedPreferences;
@@ -14,13 +11,18 @@ import android.widget.Button;
 import android.widget.TextView;
 import android.widget.TimePicker;
 import androidx.appcompat.app.AppCompatActivity;
+import androidx.cardview.widget.CardView;
 import androidx.preference.PreferenceManager;
 import java.util.Locale;
 
 public class LockSettingActivity extends AppCompatActivity {
-    private TextView timerDisplay;
-    private Button chooseAppsBtn, timePickerBtn, lockBtn, unlockBtn;
-    private TextView lockDurationText;
+
+    // UI Components
+    private TextView timerDisplay, lockDurationText;
+    private Button chooseAppsBtn, timePickerBtn, lockBtn, unlockBtn, exitBtn;
+    private CardView exitCardView;
+
+    // State variables
     private int selectedMinutes = 1;
     private SharedPreferences prefs;
     private long lockStartTime = 0;
@@ -30,6 +32,10 @@ public class LockSettingActivity extends AppCompatActivity {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_lock_setting);
 
+        // Initialize SharedPreferences
+        prefs = PreferenceManager.getDefaultSharedPreferences(this);
+        lockStartTime = prefs.getLong("lock_start_time", 0);
+
         // Initialize views
         timerDisplay = findViewById(R.id.timerDisplay);
         chooseAppsBtn = findViewById(R.id.chooseAppsBtn);
@@ -37,12 +43,10 @@ public class LockSettingActivity extends AppCompatActivity {
         lockBtn = findViewById(R.id.lockBtn);
         unlockBtn = findViewById(R.id.unlockBtn);
         lockDurationText = findViewById(R.id.lockDurationText);
+        exitCardView = findViewById(R.id.exitCardView);
+        exitBtn = findViewById(R.id.exitBtn);
 
-        prefs = PreferenceManager.getDefaultSharedPreferences(this);
-        lockStartTime = prefs.getLong("lock_start_time", 0);
-
-        updateUI();
-
+        // Set up button click listeners
         chooseAppsBtn.setOnClickListener(v -> {
             startActivity(new Intent(this, LockActivity.class));
         });
@@ -78,6 +82,15 @@ public class LockSettingActivity extends AppCompatActivity {
             startActivity(unlockIntent);
             finish();
         });
+
+        exitBtn.setOnClickListener(v -> {
+            // Open home settings to change launcher
+            Intent homeSettingsIntent = new Intent(android.provider.Settings.ACTION_HOME_SETTINGS);
+            startActivity(homeSettingsIntent);
+        });
+
+        // Update UI based on current state
+        updateUI();
     }
 
     private void resetForm() {
@@ -89,20 +102,22 @@ public class LockSettingActivity extends AppCompatActivity {
         boolean isLocked = prefs.getBoolean("is_locked", false);
 
         if (isLocked && lockStartTime > 0) {
-            // Locked state - show only unlock button
+            // Locked state - hide settings and card, show unlock button
             chooseAppsBtn.setVisibility(View.GONE);
             timePickerBtn.setVisibility(View.GONE);
             lockDurationText.setVisibility(View.GONE);
             timerDisplay.setVisibility(View.GONE);
             lockBtn.setVisibility(View.GONE);
+            exitCardView.setVisibility(View.GONE);
             unlockBtn.setVisibility(View.VISIBLE);
         } else {
-            // Unlocked state - show all settings
+            // Unlocked state - show settings and card, hide unlock button
             chooseAppsBtn.setVisibility(View.VISIBLE);
             timePickerBtn.setVisibility(View.VISIBLE);
             lockDurationText.setVisibility(View.VISIBLE);
             timerDisplay.setVisibility(View.VISIBLE);
             lockBtn.setVisibility(View.VISIBLE);
+            exitCardView.setVisibility(View.VISIBLE);
             unlockBtn.setVisibility(View.GONE);
             updateTimerDisplay();
         }
