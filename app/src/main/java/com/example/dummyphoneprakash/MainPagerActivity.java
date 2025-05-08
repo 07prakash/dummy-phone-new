@@ -9,6 +9,8 @@ import android.content.Intent;
 import android.content.IntentFilter;
 import android.content.pm.PackageManager;
 import android.os.Bundle;
+import android.widget.Toast;
+
 import androidx.appcompat.app.AppCompatActivity;
 import androidx.viewpager2.widget.ViewPager2;
 import java.util.ArrayList;
@@ -31,6 +33,17 @@ public class MainPagerActivity extends AppCompatActivity {
         }
     }
 
+    @Override
+    public void onBackPressed() {
+        int currentItem = viewPager.getCurrentItem();  // Get current page index
+
+        if (currentItem == 0) {
+
+        } else {
+            // Allow normal back press
+            super.onBackPressed();
+        }
+    }
     @Override
     protected void onNewIntent(Intent intent) {
         super.onNewIntent(intent);
