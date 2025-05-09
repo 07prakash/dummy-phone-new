@@ -1,15 +1,13 @@
 package com.example.dummyphoneprakash;
 
-
-
-
-
 import android.content.Intent;
+import android.content.SharedPreferences;
 import android.content.pm.PackageManager;
 import android.content.pm.ResolveInfo;
 import android.os.Bundle;
-import android.util.Log;
+import android.provider.Settings;
 import android.widget.Button;
+import android.widget.Toast;
 import androidx.appcompat.app.AppCompatActivity;
 import androidx.recyclerview.widget.LinearLayoutManager;
 import androidx.recyclerview.widget.RecyclerView;
@@ -18,10 +16,11 @@ import java.util.List;
 import java.util.Set;
 
 public class LockActivity extends AppCompatActivity {
-    private RecyclerView appsRecyclerView;
-    private Button saveButton;
+
     private LockAppAdapter adapter;
     private SharedPreferencesHelper prefsHelper;
+    private RecyclerView appsRecyclerView;
+    private Button saveButton;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -34,8 +33,7 @@ public class LockActivity extends AppCompatActivity {
 
         setupRecyclerView();
         setupSaveButton();
-
-        Log.d("LockActivity", "Activity created");
+        checkAccessibilityPermission();
     }
 
     private void setupRecyclerView() {
@@ -48,34 +46,42 @@ public class LockActivity extends AppCompatActivity {
         adapter = new LockAppAdapter(
                 apps,
                 pm,
-                prefsHelper.getAllowedRegularApps(),
-                prefsHelper.getDisabledEssentialApps(),
+                prefsHelper.getAllowedApps(),
                 prefsHelper.getEssentialApps()
         );
 
         appsRecyclerView.setLayoutManager(new LinearLayoutManager(this));
         appsRecyclerView.setAdapter(adapter);
-
-        Log.d("LockActivity", "RecyclerView setup with " + apps.size() + " apps");
     }
 
     private void setupSaveButton() {
         saveButton.setOnClickListener(v -> {
-            // 1. Get current selections from adapter
-            Set<String> selectedRegularApps = adapter.getSelectedRegularApps();
-            Set<String> disabledEssentialApps = adapter.getDisabledEssentialApps();
+            Set<String> selectedApps = adapter.getSelectedRegularApps();
+            Set<String> essentialApps = prefsHelper.getEssentialApps();
 
-            // 2. Save to SharedPreferences
-            prefsHelper.saveSelections(selectedRegularApps, disabledEssentialApps);
+            prefsHelper.saveAllowedApps(selectedApps, essentialApps);
 
-            // 3. Close the activity
+            Toast.makeText(this, "App blocking settings saved", Toast.LENGTH_SHORT).show();
             finish();
         });
     }
 
-    @Override
-    public void onBackPressed() {
-        super.onBackPressed();
-//        overridePendingTransition(R.anim.slide_in_left, R.anim.slide_out_right);
+    private void checkAccessibilityPermission() {
+        if (!isAccessibilityEnabled()) {
+            Intent intent = new Intent(Settings.ACTION_ACCESSIBILITY_SETTINGS);
+            startActivity(intent);
+            Toast.makeText(this,
+                    "Please enable App Blocker in Accessibility Settings",
+                    Toast.LENGTH_LONG).show();
+        }
+    }
+
+    private boolean isAccessibilityEnabled() {
+        String serviceName = getPackageName() + "/.AppBlockerService";
+        String enabledServices = Settings.Secure.getString(
+                getContentResolver(),
+                Settings.Secure.ENABLED_ACCESSIBILITY_SERVICES
+        );
+        return enabledServices != null && enabledServices.contains(serviceName);
     }
 }

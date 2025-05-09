@@ -1,0 +1,50 @@
+package com.example.dummyphoneprakash;
+
+
+
+import android.accessibilityservice.AccessibilityService;
+import android.accessibilityservice.AccessibilityServiceInfo;
+import android.content.SharedPreferences;
+import android.preference.PreferenceManager;
+import android.view.accessibility.AccessibilityEvent;
+import android.widget.Toast;
+import java.util.HashSet;
+import java.util.Set;
+
+public class AppBlockerService extends AccessibilityService {
+
+    @Override
+    public void onAccessibilityEvent(AccessibilityEvent event) {
+        if (event.getEventType() == AccessibilityEvent.TYPE_WINDOW_STATE_CHANGED) {
+            String packageName = event.getPackageName() != null ?
+                    event.getPackageName().toString() : null;
+
+            if (packageName != null && isAppBlocked(packageName)) {
+                performGlobalAction(GLOBAL_ACTION_HOME);
+                Toast.makeText(this, "This app is blocked", Toast.LENGTH_SHORT).show();
+            }
+        }
+    }
+
+    private boolean isAppBlocked(String packageName) {
+        SharedPreferences prefs = PreferenceManager.getDefaultSharedPreferences(this);
+        Set<String> allowedApps = prefs.getStringSet("allowed_apps", new HashSet<>());
+        Set<String> essentialApps = prefs.getStringSet("essential_apps", new HashSet<>());
+
+        // Allow if in allowed apps or essential apps
+        return !(allowedApps.contains(packageName) || essentialApps.contains(packageName));
+    }
+
+    @Override
+    public void onInterrupt() {}
+
+    @Override
+    protected void onServiceConnected() {
+        super.onServiceConnected();
+        AccessibilityServiceInfo info = new AccessibilityServiceInfo();
+        info.eventTypes = AccessibilityEvent.TYPE_WINDOW_STATE_CHANGED;
+        info.feedbackType = AccessibilityServiceInfo.FEEDBACK_GENERIC;
+        info.flags = AccessibilityServiceInfo.FLAG_REPORT_VIEW_IDS;
+        setServiceInfo(info);
+    }
+}
