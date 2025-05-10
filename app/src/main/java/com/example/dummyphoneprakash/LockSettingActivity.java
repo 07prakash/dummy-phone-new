@@ -62,7 +62,7 @@ public class LockSettingActivity extends AppCompatActivity {
         timePickerBtn.setOnClickListener(v -> showTimePickerDialog());
 
         lockBtn.setOnClickListener(v -> {
-                   checkAccessibilityPermission();
+
             // Save lock state and duration
             long currentTime = System.currentTimeMillis();
             prefs.edit()
@@ -105,24 +105,6 @@ public class LockSettingActivity extends AppCompatActivity {
         updateUI();
     }
 
-    private void checkAccessibilityPermission() {
-        if (!isAccessibilityEnabled()) {
-            Intent intent = new Intent(Settings.ACTION_ACCESSIBILITY_SETTINGS);
-            startActivity(intent);
-            Toast.makeText(this,
-                    "Please enable App Blocker in Accessibility Settings",
-                    Toast.LENGTH_LONG).show();
-        }
-    }
-
-    private boolean isAccessibilityEnabled() {
-        String serviceName = getPackageName() + "/.AppBlockerService";
-        String enabledServices = Settings.Secure.getString(
-                getContentResolver(),
-                Settings.Secure.ENABLED_ACCESSIBILITY_SERVICES
-        );
-        return enabledServices != null && enabledServices.contains(serviceName);
-    }
 
     //    Remove from recent apps method
     private void removeFromRecentApps() {

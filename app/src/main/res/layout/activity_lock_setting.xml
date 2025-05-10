@@ -82,6 +82,7 @@
     <!-- Unlock button (existing) -->
     <Button
         android:id="@+id/unlockBtn"
+        android:layout_marginTop="30dp"
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
         android:text="UNLOCK"
