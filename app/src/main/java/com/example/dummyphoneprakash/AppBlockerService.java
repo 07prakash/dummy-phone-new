@@ -21,18 +21,33 @@ public class AppBlockerService extends AccessibilityService {
 
             if (packageName != null && isAppBlocked(packageName)) {
                 performGlobalAction(GLOBAL_ACTION_HOME);
-                Toast.makeText(this, "This app is blocked", Toast.LENGTH_SHORT).show();
+//                Toast.makeText(this, "This app is blocked", Toast.LENGTH_SHORT).show();
             }
         }
     }
 
+//    private boolean isAppBlocked(String packageName) {
+//        SharedPreferences prefs = PreferenceManager.getDefaultSharedPreferences(this);
+//        Set<String> allowedApps = prefs.getStringSet("allowed_apps", new HashSet<>());
+//        Set<String> essentialApps = prefs.getStringSet("essential_apps", new HashSet<>());
+//
+//        // Allow if in allowed apps or essential apps
+//        return !(allowedApps.contains(packageName) || essentialApps.contains(packageName));
+//    }
     private boolean isAppBlocked(String packageName) {
         SharedPreferences prefs = PreferenceManager.getDefaultSharedPreferences(this);
-        Set<String> allowedApps = prefs.getStringSet("allowed_apps", new HashSet<>());
-        Set<String> essentialApps = prefs.getStringSet("essential_apps", new HashSet<>());
 
-        // Allow if in allowed apps or essential apps
-        return !(allowedApps.contains(packageName) || essentialApps.contains(packageName));
+        // Check if blocking is still active
+        boolean isLocked = prefs.getBoolean("is_locked", false);
+        if (!isLocked) {
+            return false; // Blocking has ended
+        }
+
+        Set<String> allowedApps = prefs.getStringSet("allowed_apps", null);
+        Set<String> essentialApps = prefs.getStringSet("essential_apps", null);
+
+        return !(allowedApps != null && allowedApps.contains(packageName)) &&
+                !(essentialApps != null && essentialApps.contains(packageName));
     }
 
     @Override
