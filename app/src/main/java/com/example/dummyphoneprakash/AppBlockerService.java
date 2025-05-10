@@ -26,14 +26,7 @@ public class AppBlockerService extends AccessibilityService {
         }
     }
 
-//    private boolean isAppBlocked(String packageName) {
-//        SharedPreferences prefs = PreferenceManager.getDefaultSharedPreferences(this);
-//        Set<String> allowedApps = prefs.getStringSet("allowed_apps", new HashSet<>());
-//        Set<String> essentialApps = prefs.getStringSet("essential_apps", new HashSet<>());
-//
-//        // Allow if in allowed apps or essential apps
-//        return !(allowedApps.contains(packageName) || essentialApps.contains(packageName));
-//    }
+
     private boolean isAppBlocked(String packageName) {
         SharedPreferences prefs = PreferenceManager.getDefaultSharedPreferences(this);
 

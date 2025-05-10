@@ -8,6 +8,8 @@ import android.os.Bundle;
 import android.provider.Settings;
 import android.widget.Button;
 import android.widget.Toast;
+
+import androidx.appcompat.app.AlertDialog;
 import androidx.appcompat.app.AppCompatActivity;
 import androidx.recyclerview.widget.LinearLayoutManager;
 import androidx.recyclerview.widget.RecyclerView;
@@ -33,7 +35,7 @@ public class LockActivity extends AppCompatActivity {
 
         setupRecyclerView();
         setupSaveButton();
-        checkAccessibilityPermission();
+        showPermissionExplanationDialog();
     }
 
     private void setupRecyclerView() {
@@ -84,4 +86,12 @@ public class LockActivity extends AppCompatActivity {
         );
         return enabledServices != null && enabledServices.contains(serviceName);
     }
+    private void showPermissionExplanationDialog() {
+        new AlertDialog.Builder(this)
+                .setTitle("Permission Needed")
+                .setMessage("This app needs accessibility permission to block apps...")
+                .setPositiveButton("OK", (d, w) -> checkAccessibilityPermission())
+                .show();
+    }
+
 }
