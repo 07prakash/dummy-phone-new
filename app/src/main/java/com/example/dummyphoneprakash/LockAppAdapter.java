@@ -48,10 +48,10 @@ public class LockAppAdapter extends RecyclerView.Adapter<LockAppAdapter.AppViewH
         ResolveInfo app = apps.get(position);
         String packageName = app.activityInfo.packageName;
         boolean isEssential = essentialApps.contains(packageName);
-        boolean isChecked = selectedPackages.contains(packageName) || isEssential;
+        boolean isChecked = isEssential || selectedPackages.contains(packageName);
 
         holder.bind(app, pm, isChecked, isEssential, (pkgName, checked) -> {
-            if (!isEssential) { // Don't allow changing essential apps
+            if (!isEssential) { // Only allow changes for non-essential apps
                 if (checked) {
                     selectedPackages.add(pkgName);
                 } else {
@@ -92,12 +92,22 @@ public class LockAppAdapter extends RecyclerView.Adapter<LockAppAdapter.AppViewH
             appIcon.setImageDrawable(app.loadIcon(pm));
             appName.setText(app.loadLabel(pm));
 
+            // Visual indication for essential apps
+            float alpha = isEssential ? 0.7f : 1.0f;
+            appIcon.setAlpha(alpha);
+            appName.setAlpha(alpha);
+
             checkBox.setOnCheckedChangeListener(null);
             checkBox.setChecked(isChecked);
-            checkBox.setEnabled(!isEssential); // Disable for essential apps
+            checkBox.setEnabled(!isEssential); // Disable checkbox for essential apps
 
             checkBox.setOnCheckedChangeListener((buttonView, checked) -> {
-                listener.onAppChecked(packageName, checked);
+                if (!isEssential) { // Only notify for non-essential apps
+                    listener.onAppChecked(packageName, checked);
+                } else {
+                    // Force checked state for essential apps
+                    checkBox.setChecked(true);
+                }
             });
         }
     }

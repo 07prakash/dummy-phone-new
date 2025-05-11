@@ -39,6 +39,7 @@ public class AppBlockerService extends AccessibilityService {
         Set<String> allowedApps = prefs.getStringSet("allowed_apps", null);
         Set<String> essentialApps = prefs.getStringSet("essential_apps", null);
 
+
         return !(allowedApps != null && allowedApps.contains(packageName)) &&
                 !(essentialApps != null && essentialApps.contains(packageName));
     }
