@@ -1,34 +1,44 @@
 <?xml version="1.0" encoding="utf-8"?>
-<LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
+<androidx.constraintlayout.widget.ConstraintLayout xmlns:android="http://schemas.android.com/apk/res/android"
     xmlns:app="http://schemas.android.com/apk/res-auto"
-    android:layout_width="match_parent"
-    android:layout_height="72dp"
-    android:orientation="horizontal"
-    android:paddingStart="24dp"
-    android:paddingEnd="24dp"
-    android:gravity="center_vertical"
-    android:background="?attr/selectableItemBackground">
+    xmlns:tools="http://schemas.android.com/tools"
+    android:layout_width="wrap_content"
+    android:layout_height="wrap_content"
+    android:orientation="vertical"
+    android:gravity="center"
+    android:padding="12dp">
 
     <ImageView
         android:id="@+id/appIcon"
-        android:layout_width="48dp"
-        android:layout_height="48dp"
-        android:layout_marginEnd="16dp"/>
+        android:layout_width="50dp"
+        android:layout_height="50dp"
+        app:layout_constraintBottom_toBottomOf="parent"
+        app:layout_constraintEnd_toEndOf="@+id/appCheckBox"
+        app:layout_constraintHorizontal_bias="1.0"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintTop_toTopOf="parent"
+        app:layout_constraintVertical_bias="0.0" />
 
     <TextView
         android:id="@+id/appName"
-        android:layout_width="0dp"
+        android:layout_width="wrap_content"
         android:layout_height="wrap_content"
-        android:layout_weight="1"
         android:ellipsize="end"
+        android:maxWidth="80dp"
         android:maxLines="2"
-        android:textSize="16sp"
-        android:textColor="@color/white"/>
+        android:singleLine="true"
+        android:textSize="12sp"
+        app:layout_constraintEnd_toEndOf="@+id/appIcon"
+        app:layout_constraintStart_toStartOf="@+id/appIcon"
+        app:layout_constraintTop_toBottomOf="@+id/appIcon" />
 
     <CheckBox
         android:id="@+id/appCheckBox"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
-        android:layout_marginStart="16dp"
-        app:buttonTint="#FFEB3B"/>
-</LinearLayout>
+        app:buttonTint="#FFEB3B"
+        app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintHorizontal_bias="1.0"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintTop_toTopOf="parent" />
+</androidx.constraintlayout.widget.ConstraintLayout>

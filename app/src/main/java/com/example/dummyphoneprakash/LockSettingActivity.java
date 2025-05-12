@@ -18,6 +18,7 @@ import android.widget.Toast;
 
 import androidx.appcompat.app.AppCompatActivity;
 import androidx.cardview.widget.CardView;
+import androidx.fragment.app.FragmentContainerView;
 import androidx.preference.PreferenceManager;
 import java.util.ArrayList;
 import java.util.List;
@@ -26,9 +27,9 @@ import java.util.Locale;
 public class LockSettingActivity extends AppCompatActivity {
 
     // UI Components
-    private TextView timerDisplay, lockDurationText;
-    private Button chooseAppsBtn, timePickerBtn, lockBtn, unlockBtn, exitBtn;
-    private CardView exitCardView;
+    private TextView timerDisplay,choostext;
+    private Button  timePickerBtn, lockBtn, unlockBtn, exitBtn;
+    private FragmentContainerView fragmentContainerView;
 
     // State variables
     private int selectedMinutes = 1;
@@ -46,23 +47,25 @@ public class LockSettingActivity extends AppCompatActivity {
 
         // Initialize views
         timerDisplay = findViewById(R.id.timerDisplay);
-        chooseAppsBtn = findViewById(R.id.chooseAppsBtn);
+        choostext = findViewById(R.id.choostext);
+
         timePickerBtn = findViewById(R.id.timePickerBtn);
         lockBtn = findViewById(R.id.lockBtn);
         unlockBtn = findViewById(R.id.unlockBtn);
-        lockDurationText = findViewById(R.id.lockDurationText);
-        exitCardView = findViewById(R.id.exitCardView);
         exitBtn = findViewById(R.id.exitBtn);
+        fragmentContainerView = findViewById(R.id.fragmentContainerView);
 
-        // Set up button click listeners
-        chooseAppsBtn.setOnClickListener(v -> {
-            startActivity(new Intent(this, LockActivity.class));
-        });
+        if (!isMyLauncherDefault()) {
+            // Only open launcher selection if not default launcher
+            Intent homeSettingsIntent = new Intent(android.provider.Settings.ACTION_HOME_SETTINGS);
+            startActivity(homeSettingsIntent);
+        }
 
         timePickerBtn.setOnClickListener(v -> showTimePickerDialog());
 
         lockBtn.setOnClickListener(v -> {
 
+            checkAccessibilityPermission();
             // Save lock state and duration
             long currentTime = System.currentTimeMillis();
             prefs.edit()
@@ -71,11 +74,7 @@ public class LockSettingActivity extends AppCompatActivity {
                     .putBoolean("is_locked", true)
                     .apply();
 
-            if (!isMyLauncherDefault()) {
-                // Only open launcher selection if not default launcher
-                Intent homeSettingsIntent = new Intent(android.provider.Settings.ACTION_HOME_SETTINGS);
-                startActivity(homeSettingsIntent);
-            }
+
 // Remove from recent apps
             removeFromRecentApps();
             // Reset form and finish
@@ -103,6 +102,22 @@ public class LockSettingActivity extends AppCompatActivity {
 
         // Update UI based on current state
         updateUI();
+    }
+
+    private void checkAccessibilityPermission() {
+        String serviceName = getPackageName() + "/.AppBlockerService";
+        String enabledServices = Settings.Secure.getString(
+                getContentResolver(),
+                Settings.Secure.ENABLED_ACCESSIBILITY_SERVICES
+        );
+
+        if (enabledServices == null || !enabledServices.contains(serviceName)) {
+            Toast.makeText(this,
+                    "Please enable App Blocker in Accessibility Settings",
+                    Toast.LENGTH_LONG).show();
+            startActivity(new Intent(Settings.ACTION_ACCESSIBILITY_SETTINGS));
+
+        }
     }
 
 
@@ -149,22 +164,25 @@ public class LockSettingActivity extends AppCompatActivity {
 
         if (isLocked && lockStartTime > 0) {
             // Locked state - hide settings and card, show unlock button
-            chooseAppsBtn.setVisibility(View.GONE);
+            choostext.setVisibility(View.GONE);
             timePickerBtn.setVisibility(View.GONE);
-            lockDurationText.setVisibility(View.GONE);
             timerDisplay.setVisibility(View.GONE);
             lockBtn.setVisibility(View.GONE);
-            exitCardView.setVisibility(View.GONE);
             unlockBtn.setVisibility(View.VISIBLE);
+            fragmentContainerView.setVisibility(View.GONE);
+            exitBtn.setVisibility(View.GONE);
         } else {
             // Unlocked state - show settings and card, hide unlock button
-            chooseAppsBtn.setVisibility(View.VISIBLE);
+
             timePickerBtn.setVisibility(View.VISIBLE);
-            lockDurationText.setVisibility(View.VISIBLE);
+
             timerDisplay.setVisibility(View.VISIBLE);
+            choostext.setVisibility(View.VISIBLE);
             lockBtn.setVisibility(View.VISIBLE);
-            exitCardView.setVisibility(View.VISIBLE);
+
             unlockBtn.setVisibility(View.GONE);
+            fragmentContainerView.setVisibility(View.VISIBLE);
+            exitBtn.setVisibility(View.VISIBLE);
             updateTimerDisplay();
         }
     }

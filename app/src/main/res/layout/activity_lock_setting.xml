@@ -1,93 +1,120 @@
 <?xml version="1.0" encoding="utf-8"?>
-<LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
+<androidx.constraintlayout.widget.ConstraintLayout xmlns:android="http://schemas.android.com/apk/res/android"
     xmlns:app="http://schemas.android.com/apk/res-auto"
+    xmlns:tools="http://schemas.android.com/tools"
     android:layout_width="match_parent"
     android:layout_height="match_parent"
+    android:background="@color/black"
     android:orientation="vertical"
     android:padding="24dp"
     android:gravity="center_horizontal">
 
     <!-- Existing views remain the same -->
-    <Button
-        android:id="@+id/chooseAppsBtn"
-        android:layout_width="match_parent"
-        android:layout_height="wrap_content"
-        android:text="Choose Apps to Use"
-        android:layout_marginBottom="16dp"/>
 
-    <TextView
-        android:id="@+id/lockDurationText"
-        android:layout_width="wrap_content"
-        android:layout_height="wrap_content"
-        android:text="Lock Duration:"
-        android:textSize="18sp"
-        android:layout_marginBottom="8dp"/>
+
+    <Button
+        android:id="@+id/timePickerBtn"
+        android:layout_width="200dp"
+        android:layout_height="50dp"
+        android:layout_marginTop="40dp"
+        android:backgroundTint="#009688"
+
+        android:text="Set Lock Duration"
+        android:textColor="@color/white"
+        android:textSize="18dp"
+        app:cornerRadius="5dp"
+        app:iconPadding="8dp"
+        app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintHorizontal_bias="0.496"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintTop_toBottomOf="@+id/fragmentContainerView" />
 
     <TextView
         android:id="@+id/timerDisplay"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
-        android:textSize="24sp"
+        android:layout_marginTop="4dp"
+        android:textColor="@color/white"
+        android:textSize="20sp"
         android:textStyle="bold"
-        android:layout_marginBottom="16dp"/>
-
-    <Button
-        android:id="@+id/timePickerBtn"
-        android:layout_width="match_parent"
-        android:layout_height="wrap_content"
-        android:text="Change Duration"
-        android:layout_marginBottom="24dp"/>
+        app:layout_constraintEnd_toEndOf="@+id/timePickerBtn"
+        app:layout_constraintStart_toStartOf="@+id/timePickerBtn"
+        app:layout_constraintTop_toBottomOf="@+id/timePickerBtn" />
 
     <Button
         android:id="@+id/lockBtn"
-        android:layout_width="match_parent"
+        android:layout_width="150dp"
         android:layout_height="wrap_content"
+        android:backgroundTint="#4CAF50"
         android:text="LOCK NOW"
-        android:backgroundTint="#FF0000"
         android:textColor="@android:color/white"
-        android:textStyle="bold"/>
+        android:textStyle="bold"
+        app:layout_constraintBottom_toBottomOf="@+id/exitBtn"
+        app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintHorizontal_bias="1.0"
+        app:layout_constraintStart_toEndOf="@+id/exitBtn"
+        app:layout_constraintTop_toTopOf="@+id/exitBtn"
+        app:layout_constraintVertical_bias="0.0" />
 
-    <!-- New CardView -->
-    <androidx.cardview.widget.CardView
-        android:id="@+id/exitCardView"
-        android:layout_width="match_parent"
-        android:layout_height="wrap_content"
-        android:layout_marginTop="24dp"
-        app:cardCornerRadius="8dp"
-        app:cardElevation="4dp"
-        app:cardUseCompatPadding="true">
-
-        <LinearLayout
-            android:layout_width="match_parent"
-            android:layout_height="wrap_content"
-            android:orientation="vertical"
-            android:padding="16dp">
-
-            <TextView
-                android:layout_width="wrap_content"
-                android:layout_height="wrap_content"
-                android:text="After the time ends, what to exit?"
-                android:textSize="16sp"
-                android:layout_marginBottom="16dp"/>
-
-            <Button
-                android:id="@+id/exitBtn"
-                android:layout_width="wrap_content"
-                android:layout_height="wrap_content"
-                android:text="Exit"
-                android:layout_gravity="end"/>
-        </LinearLayout>
-    </androidx.cardview.widget.CardView>
-
-    <!-- Unlock button (existing) -->
     <Button
         android:id="@+id/unlockBtn"
-        android:layout_marginTop="30dp"
-        android:layout_width="match_parent"
-        android:layout_height="wrap_content"
-        android:text="UNLOCK"
+        android:layout_width="176dp"
+        android:layout_height="42dp"
         android:backgroundTint="#4CAF50"
-        android:textColor="@android:color/white"
-        android:visibility="gone"/>
+        android:text="UNLOCK"
 
-</LinearLayout>
+        android:textColor="@android:color/white"
+        android:visibility="gone"
+        app:layout_constraintBottom_toBottomOf="parent"
+        app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintTop_toTopOf="parent"
+        app:layout_constraintVertical_bias="0.499" />
+
+    <Button
+        android:id="@+id/exitBtn"
+        android:layout_width="110dp"
+        android:layout_height="wrap_content"
+        android:layout_gravity="end"
+        android:layout_marginStart="8dp"
+        android:backgroundTint="#FF0000"
+        android:text="EXIT"
+        android:textColor="@android:color/white"
+        app:layout_constraintBottom_toBottomOf="parent"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintTop_toBottomOf="@+id/timePickerBtn"
+        app:layout_constraintVertical_bias="0.615" />
+
+    <TextView
+        android:id="@+id/choostext"
+        android:layout_width="match_parent"
+        android:layout_height="40dp"
+        android:gravity="center"
+        android:text="Chose App To Use"
+
+        android:textAlignment="center"
+
+        android:textColor="@color/white"
+        android:textColorLink="#FFFFFF"
+        android:textSize="20sp"
+        app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintHorizontal_bias="1.0"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintTop_toTopOf="parent" />
+
+    <androidx.fragment.app.FragmentContainerView
+        android:id="@+id/fragmentContainerView"
+
+        android:name="com.example.dummyphoneprakash.LockFragment"
+        android:layout_width="0dp"
+        android:layout_height="350dp"
+        android:layout_marginStart="1dp"
+        android:layout_marginTop="4dp"
+        android:layout_marginEnd="1dp"
+        app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintHorizontal_bias="0.0"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintTop_toBottomOf="@+id/choostext" />
+
+
+</androidx.constraintlayout.widget.ConstraintLayout>
