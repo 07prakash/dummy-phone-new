@@ -1,4 +1,4 @@
-// LockFragment.java
+// LockFragment.java (unchanged from previous version)
 package com.example.dummyphoneprakash;
 
 import android.content.Intent;
@@ -14,6 +14,8 @@ import androidx.annotation.Nullable;
 import androidx.fragment.app.Fragment;
 import androidx.recyclerview.widget.GridLayoutManager;
 import androidx.recyclerview.widget.RecyclerView;
+import java.util.Arrays;
+import java.util.HashSet;
 import java.util.Set;
 
 public class LockFragment extends Fragment {
@@ -35,7 +37,7 @@ public class LockFragment extends Fragment {
         RecyclerView appsRecyclerView = view.findViewById(R.id.appsRecyclerView);
 
         setupRecyclerView(appsRecyclerView);
-
+//        checkAccessibilityPermission();
     }
 
     private void setupRecyclerView(RecyclerView recyclerView) {
@@ -43,23 +45,52 @@ public class LockFragment extends Fragment {
         Intent intent = new Intent(Intent.ACTION_MAIN, null);
         intent.addCategory(Intent.CATEGORY_LAUNCHER);
 
+        Set<String> excludedPackages = new HashSet<>(Arrays.asList(
+                "com.example.dummyphoneprakash",      // Dummy Phone app
+                "com.android.settings",               // Default on most devices
+                "com.samsung.android.settings",       // Samsung
+                "com.miui.securitycenter",            // Xiaomi
+                "com.coloros.safecenter",             // Oppo / Realme
+                "com.huawei.systemmanager",           // Huawei
+                "com.hihonor.systemmanager",          // Honor
+                "com.transsion.XOSLauncher.settings"  // Infinix / Tecno / itel
+        ));
+
         adapter = new LockAppAdapter(
                 pm.queryIntentActivities(intent, 0),
                 pm,
                 prefsHelper.getAllowedApps(),
-                prefsHelper.getEssentialApps()
+                prefsHelper.getEssentialApps(),
+                excludedPackages
         );
 
         adapter.setOnAppCheckedListener((packageName, isChecked) -> {
             Set<String> selectedApps = adapter.getSelectedRegularApps();
-            Set<String> essentialApps = prefsHelper.getEssentialApps();
+            Set<String> essentialApps = adapter.getSelectedEssentialApps();
             prefsHelper.saveAllowedApps(selectedApps, essentialApps);
-            Toast.makeText(requireContext(), "Settings saved", Toast.LENGTH_SHORT).show();
+            if (isChecked) {
+            Toast.makeText(requireContext(), "Added", Toast.LENGTH_SHORT).show();}
+            else {
+                Toast.makeText(requireContext(), "Removed", Toast.LENGTH_SHORT).show();
+            }
         });
 
         recyclerView.setLayoutManager(new GridLayoutManager(requireContext(), 4));
         recyclerView.setAdapter(adapter);
     }
 
-
+//    private void checkAccessibilityPermission() {
+//        String serviceName = requireContext().getPackageName() + "/.AppBlockerService";
+//        String enabledServices = Settings.Secure.getString(
+//                requireContext().getContentResolver(),
+//                Settings.Secure.ENABLED_ACCESSIBILITY_SERVICES
+//        );
+//
+//        if (enabledServices == null || !enabledServices.contains(serviceName)) {
+//            Toast.makeText(requireContext(),
+//                    "Please enable App Blocker in Accessibility Settings",
+//                    Toast.LENGTH_LONG).show();
+//            startActivity(new Intent(Settings.ACTION_ACCESSIBILITY_SETTINGS));
+//        }
+//    }
 }

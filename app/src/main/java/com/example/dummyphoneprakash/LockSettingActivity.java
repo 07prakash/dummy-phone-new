@@ -41,6 +41,9 @@ public class LockSettingActivity extends AppCompatActivity {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_lock_setting);
 
+        // Remove from recent apps
+        removeFromRecentApps();
+
         // Initialize SharedPreferences
         prefs = PreferenceManager.getDefaultSharedPreferences(this);
         lockStartTime = prefs.getLong("lock_start_time", 0);
@@ -75,8 +78,6 @@ public class LockSettingActivity extends AppCompatActivity {
                     .apply();
 
 
-// Remove from recent apps
-            removeFromRecentApps();
             // Reset form and finish
             resetForm();
             finish();

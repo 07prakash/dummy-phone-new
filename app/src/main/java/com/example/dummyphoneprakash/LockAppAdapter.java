@@ -1,4 +1,4 @@
-// LockAppAdapter.java
+// LockAppAdapter.java (updated to allow essential app toggling)
 package com.example.dummyphoneprakash;
 
 import android.content.pm.PackageManager;
@@ -27,52 +27,61 @@ public class LockAppAdapter extends RecyclerView.Adapter<LockAppAdapter.AppViewH
     private List<ResolveInfo> originalApps;
     private List<ResolveInfo> filteredApps;
     private final PackageManager pm;
-    private final Set<String> selectedPackages;
-    private final Set<String> essentialApps;
+    private final Set<String> selectedRegularApps;
+    private final Set<String> selectedEssentialApps; // Tracks essential app selections
+    private final Set<String> essentialApps; // Original essential apps set
     private OnAppCheckedListener checkedListener;
+    private final Set<String> excludedPackages;
 
     public LockAppAdapter(List<ResolveInfo> apps,
                           PackageManager pm,
                           Set<String> initiallySelected,
-                          Set<String> essentialApps) {
-        this.originalApps = apps;
+                          Set<String> essentialApps,
+                          Set<String> excludedPackages) {
         this.pm = pm;
-        this.selectedPackages = new HashSet<>(initiallySelected);
+        this.selectedRegularApps = new HashSet<>(initiallySelected);
         this.essentialApps = new HashSet<>(essentialApps);
-        this.filteredApps = new ArrayList<>(apps);
+        this.selectedEssentialApps = new HashSet<>(essentialApps); // Start with all essential selected
+        this.excludedPackages = excludedPackages;
+        this.originalApps = filterOutExcludedApps(apps);
+        this.filteredApps = new ArrayList<>(originalApps);
         sortAppsByCheckedState();
     }
 
-    public void setOnAppCheckedListener(OnAppCheckedListener listener) {
-        this.checkedListener = listener;
+    private List<ResolveInfo> filterOutExcludedApps(List<ResolveInfo> apps) {
+        List<ResolveInfo> filtered = new ArrayList<>();
+        for (ResolveInfo app : apps) {
+            String packageName = app.activityInfo.packageName;
+            if (!excludedPackages.contains(packageName)) {
+                filtered.add(app);
+            }
+        }
+        return filtered;
     }
 
     private void sortAppsByCheckedState() {
-        Collections.sort(filteredApps, new Comparator<ResolveInfo>() {
-            @Override
-            public int compare(ResolveInfo a, ResolveInfo b) {
-                String pkgA = a.activityInfo.packageName;
-                String pkgB = b.activityInfo.packageName;
+        Collections.sort(filteredApps, (a, b) -> {
+            String pkgA = a.activityInfo.packageName;
+            String pkgB = b.activityInfo.packageName;
 
-                boolean isCheckedA = isChecked(pkgA);
-                boolean isCheckedB = isChecked(pkgB);
+            boolean isCheckedA = isChecked(pkgA);
+            boolean isCheckedB = isChecked(pkgB);
 
-                if (isCheckedA && !isCheckedB) {
-                    return -1; // A comes first
-                } else if (!isCheckedA && isCheckedB) {
-                    return 1; // B comes first
-                } else {
-                    // If both are checked or both are unchecked, sort alphabetically
-                    String labelA = a.loadLabel(pm).toString();
-                    String labelB = b.loadLabel(pm).toString();
-                    return labelA.compareToIgnoreCase(labelB);
-                }
+            if (isCheckedA && !isCheckedB) {
+                return -1; // A comes first
+            } else if (!isCheckedA && isCheckedB) {
+                return 1; // B comes first
+            } else {
+                String labelA = a.loadLabel(pm).toString();
+                String labelB = b.loadLabel(pm).toString();
+                return labelA.compareToIgnoreCase(labelB);
             }
         });
     }
 
     private boolean isChecked(String packageName) {
-        return essentialApps.contains(packageName) || selectedPackages.contains(packageName);
+        return selectedEssentialApps.contains(packageName) ||
+                (!essentialApps.contains(packageName) && selectedRegularApps.contains(packageName));
     }
 
     @NonNull
@@ -88,20 +97,26 @@ public class LockAppAdapter extends RecyclerView.Adapter<LockAppAdapter.AppViewH
         ResolveInfo app = filteredApps.get(position);
         String packageName = app.activityInfo.packageName;
         boolean isEssential = essentialApps.contains(packageName);
-        boolean isChecked = isEssential || selectedPackages.contains(packageName);
+        boolean isChecked = isChecked(packageName);
 
         holder.bind(app, pm, isChecked, isEssential, (pkgName, checked) -> {
-            if (!isEssential) {
+            if (isEssential) {
                 if (checked) {
-                    selectedPackages.add(pkgName);
+                    selectedEssentialApps.add(pkgName);
                 } else {
-                    selectedPackages.remove(pkgName);
+                    selectedEssentialApps.remove(pkgName);
                 }
-                sortAppsByCheckedState();
-                notifyDataSetChanged();
-                if (checkedListener != null) {
-                    checkedListener.onAppChecked(pkgName, checked);
+            } else {
+                if (checked) {
+                    selectedRegularApps.add(pkgName);
+                } else {
+                    selectedRegularApps.remove(pkgName);
                 }
+            }
+            sortAppsByCheckedState();
+            notifyDataSetChanged();
+            if (checkedListener != null) {
+                checkedListener.onAppChecked(pkgName, checked);
             }
         });
     }
@@ -112,7 +127,15 @@ public class LockAppAdapter extends RecyclerView.Adapter<LockAppAdapter.AppViewH
     }
 
     public Set<String> getSelectedRegularApps() {
-        return new HashSet<>(selectedPackages);
+        return new HashSet<>(selectedRegularApps);
+    }
+
+    public Set<String> getSelectedEssentialApps() {
+        return new HashSet<>(selectedEssentialApps);
+    }
+
+    public void setOnAppCheckedListener(OnAppCheckedListener listener) {
+        this.checkedListener = listener;
     }
 
     static class AppViewHolder extends RecyclerView.ViewHolder {
@@ -137,20 +160,17 @@ public class LockAppAdapter extends RecyclerView.Adapter<LockAppAdapter.AppViewH
             appIcon.setImageDrawable(app.loadIcon(pm));
             appName.setText(app.loadLabel(pm));
 
-            float alpha = isEssential ? 0.7f : 1.0f;
-            appIcon.setAlpha(alpha);
-            appName.setAlpha(alpha);
+//            // Visual indication for essential apps (slightly grayed out)
+//            float alpha = isEssential ? 0.8f : 1.0f;
+//            appIcon.setAlpha(alpha);
+//            appName.setAlpha(alpha);
 
             checkBox.setOnCheckedChangeListener(null);
             checkBox.setChecked(isChecked);
-            checkBox.setEnabled(!isEssential);
+            checkBox.setEnabled(true); // All checkboxes are now enabled
 
             checkBox.setOnCheckedChangeListener((buttonView, checked) -> {
-                if (!isEssential) {
-                    listener.onAppChecked(packageName, checked);
-                } else {
-                    checkBox.setChecked(true);
-                }
+                listener.onAppChecked(packageName, checked);
             });
         }
     }

@@ -17,10 +17,35 @@ public class SharedPreferencesHelper {
         add("com.android.contacts");       // Contacts
         add("com.android.mms");            // Messaging
 
+        // Maps
+        add("com.google.android.apps.maps");
+        add("com.waze");
+        add("com.huawei.maps.app");
+
+// Messages
+        add("com.google.android.apps.messaging");
+        add("com.samsung.android.messaging");
+        add("com.miui.mms");
+        add("com.coloros.mms");
+        add("com.vivo.messaging");
+
+// Dialer
+        add("com.google.android.dialer");
+        add("com.samsung.android.dialer");
+        add("com.coloros.dialer");
+        add("com.motorola.dialer");
+
+// Contacts
+        add("com.google.android.contacts");
+        add("com.samsung.android.contacts");
+        add("com.miui.contacts");
+        add("com.coloros.contacts");
+        add("com.vivo.contact");
+
+
         add("com.example.dummyphoneprakash");
 
-        add("com.google.android.dialer");  // Google Dialer
-        add("com.google.android.apps.messaging"); // Google Messages
+
 
         add("com.android.systemui");             // AOSP / base Android
         add("com.google.android.systemui");      // Pixel phones
