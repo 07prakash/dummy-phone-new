@@ -61,10 +61,12 @@ public abstract class BaseViewPagerFragment extends Fragment implements TimeEndD
         if (baseActivity != null) {
             baseActivity.onExitSelected();
         } else {
-            startActivity(new Intent(requireContext(), UnlockActivity.class));
-            // Open home settings to change launcher
-            Intent homeSettingsIntent = new Intent(Settings.ACTION_HOME_SETTINGS);
-            startActivity(homeSettingsIntent);
+            Intent unlockIntent = new Intent(getContext(), UnlockActivity.class);
+            unlockIntent.putExtra("EXIT_FLOW", true);
+            startActivity(unlockIntent);
+
+            // Close current activity
+//            baseActivity.finish();
         }
     }
 }

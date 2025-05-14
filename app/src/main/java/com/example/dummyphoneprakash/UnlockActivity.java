@@ -4,6 +4,9 @@ import android.content.Intent;
 import android.content.SharedPreferences;
 import android.os.Bundle;
 import android.os.CountDownTimer;
+import android.os.Handler;
+import android.os.Looper;
+import android.provider.Settings;
 import android.widget.Button;
 import android.widget.TextView;
 
@@ -19,6 +22,20 @@ public class UnlockActivity extends BaseActivity {
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_unlock);
+        // Check if we're exiting the app
+        if (getIntent().getBooleanExtra("EXIT_FLOW", false)) {
+            new Handler(Looper.getMainLooper()).postDelayed(() -> {
+                try {
+                    Intent homeSettingsIntent = new Intent(Settings.ACTION_HOME_SETTINGS);
+                    homeSettingsIntent.addFlags(Intent.FLAG_ACTIVITY_NEW_TASK);
+                    startActivity(homeSettingsIntent);
+                    finish(); // Close UnlockActivity
+                } catch (Exception e) {
+                    e.printStackTrace();
+                }
+            }, 100); // 1 second delay
+        }
+
 
         prefs = PreferenceManager.getDefaultSharedPreferences(this);
         countdownText = findViewById(R.id.countdownText);
