@@ -1,7 +1,6 @@
 package com.example.dummyphoneprakash;
 
 import android.app.ActivityManager;
-import android.app.TimePickerDialog;
 import android.content.ComponentName;
 import android.content.Intent;
 import android.content.IntentFilter;
@@ -13,22 +12,22 @@ import android.provider.Settings;
 import android.view.View;
 import android.widget.Button;
 import android.widget.TextView;
-import android.widget.TimePicker;
 import android.widget.Toast;
 
 import androidx.appcompat.app.AppCompatActivity;
-import androidx.cardview.widget.CardView;
 import androidx.fragment.app.FragmentContainerView;
 import androidx.preference.PreferenceManager;
+
 import java.util.ArrayList;
 import java.util.List;
 import java.util.Locale;
+import java.util.concurrent.TimeUnit;
 
-public class LockSettingActivity extends AppCompatActivity {
+public class LockSettingActivity extends AppCompatActivity implements CustomTimePickerFragment.TimePickerListener {
 
     // UI Components
-    private TextView timerDisplay,choostext;
-    private Button  timePickerBtn, lockBtn, unlockBtn, exitBtn;
+    private TextView timerDisplay, choostext;
+    private Button timePickerBtn, lockBtn, unlockBtn, exitBtn;
     private FragmentContainerView fragmentContainerView;
 
     // State variables
@@ -51,7 +50,6 @@ public class LockSettingActivity extends AppCompatActivity {
         // Initialize views
         timerDisplay = findViewById(R.id.timerDisplay);
         choostext = findViewById(R.id.choostext);
-
         timePickerBtn = findViewById(R.id.timePickerBtn);
         lockBtn = findViewById(R.id.lockBtn);
         unlockBtn = findViewById(R.id.unlockBtn);
@@ -60,50 +58,56 @@ public class LockSettingActivity extends AppCompatActivity {
 
         if (!isMyLauncherDefault()) {
             // Only open launcher selection if not default launcher
-            Intent homeSettingsIntent = new Intent(android.provider.Settings.ACTION_HOME_SETTINGS);
+            Intent homeSettingsIntent = new Intent(Settings.ACTION_HOME_SETTINGS);
             startActivity(homeSettingsIntent);
         }
 
-        timePickerBtn.setOnClickListener(v -> showTimePickerDialog());
+        timePickerBtn.setOnClickListener(v -> {
+            CustomTimePickerFragment timePickerFragment = new CustomTimePickerFragment();
+            timePickerFragment.show(getSupportFragmentManager(), "timePicker");
+        });
 
         lockBtn.setOnClickListener(v -> {
-
             checkAccessibilityPermission();
+
             // Save lock state and duration
             long currentTime = System.currentTimeMillis();
+            long durationMillis = selectedMinutes * 60 * 1000L;
+
             prefs.edit()
                     .putLong("lock_start_time", currentTime)
-                    .putInt("lock_duration", selectedMinutes)
+                    .putLong("lock_duration", durationMillis)
                     .putBoolean("is_locked", true)
                     .apply();
 
-
-            // Reset form and finish
-            resetForm();
-            finish();
+            // Start MainPagerActivity instead of UnlockActivity
+//            startActivity(new Intent(LockSettingActivity.this, MainPagerActivity.class));
+//            finish();
         });
 
+        // In LockSettingActivity's unlockBtn click listener:
         unlockBtn.setOnClickListener(v -> {
-            // Calculate remaining time
+            // Calculate remaining time in milliseconds
             long elapsedMillis = System.currentTimeMillis() - lockStartTime;
-            int totalLockMillis = prefs.getInt("lock_duration", 1) * 60 * 1000;
-            int remainingMillis = (int) Math.max(totalLockMillis - elapsedMillis, 0);
+            long totalLockMillis = selectedMinutes * 60 * 1000L;
+            long remainingMillis = Math.max(totalLockMillis - elapsedMillis, 0);
 
             Intent unlockIntent = new Intent(this, UnlockActivity.class);
             unlockIntent.putExtra("REMAINING_TIME", remainingMillis);
             startActivity(unlockIntent);
             finish();
         });
-
         exitBtn.setOnClickListener(v -> {
             // Open home settings to change launcher
-            Intent homeSettingsIntent = new Intent(android.provider.Settings.ACTION_HOME_SETTINGS);
+            Intent homeSettingsIntent = new Intent(Settings.ACTION_HOME_SETTINGS);
             startActivity(homeSettingsIntent);
         });
 
         // Update UI based on current state
         updateUI();
     }
+
+
 
     private void checkAccessibilityPermission() {
         String serviceName = getPackageName() + "/.AppBlockerService";
@@ -117,12 +121,9 @@ public class LockSettingActivity extends AppCompatActivity {
                     "Please enable App Blocker in Accessibility Settings",
                     Toast.LENGTH_LONG).show();
             startActivity(new Intent(Settings.ACTION_ACCESSIBILITY_SETTINGS));
-
         }
     }
 
-
-    //    Remove from recent apps method
     private void removeFromRecentApps() {
         if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.LOLLIPOP) {
             ActivityManager am = (ActivityManager) getSystemService(ACTIVITY_SERVICE);
@@ -174,13 +175,10 @@ public class LockSettingActivity extends AppCompatActivity {
             exitBtn.setVisibility(View.GONE);
         } else {
             // Unlocked state - show settings and card, hide unlock button
-
             timePickerBtn.setVisibility(View.VISIBLE);
-
             timerDisplay.setVisibility(View.VISIBLE);
             choostext.setVisibility(View.VISIBLE);
             lockBtn.setVisibility(View.VISIBLE);
-
             unlockBtn.setVisibility(View.GONE);
             fragmentContainerView.setVisibility(View.VISIBLE);
             exitBtn.setVisibility(View.VISIBLE);
@@ -188,26 +186,30 @@ public class LockSettingActivity extends AppCompatActivity {
         }
     }
 
-    private void showTimePickerDialog() {
-        TimePickerDialog timePickerDialog = new TimePickerDialog(
-                this,
-                (view, hourOfDay, minute) -> {
-                    selectedMinutes = hourOfDay * 60 + minute;
-                    if (selectedMinutes == 0) selectedMinutes = 1;
-                    updateTimerDisplay();
-                },
-                0, 1, true
-        );
-        timePickerDialog.setTitle("Select Lock Duration");
-        timePickerDialog.show();
+    private void updateTimerDisplay() {
+        // Convert minutes to milliseconds for calculation
+        long totalMillis = selectedMinutes * 60 * 1000L;
+
+        // Calculate time components
+        long months = TimeUnit.MILLISECONDS.toDays(totalMillis) / 30;
+        long days = TimeUnit.MILLISECONDS.toDays(totalMillis) % 30;
+        long hours = TimeUnit.MILLISECONDS.toHours(totalMillis) % 24;
+        long minutes = TimeUnit.MILLISECONDS.toMinutes(totalMillis) % 60;
+
+        // Build the time string
+        StringBuilder timeText = new StringBuilder();
+        if (months > 0) timeText.append(months).append("mo ");
+        if (days > 0) timeText.append(days).append("d ");
+        if (hours > 0) timeText.append(hours).append("h ");
+        if (minutes > 0 || timeText.length() == 0) timeText.append(minutes).append("m");
+
+        timerDisplay.setText(timeText.toString().trim());
     }
 
-    private void updateTimerDisplay() {
-        int hours = selectedMinutes / 60;
-        int minutes = selectedMinutes % 60;
-        String timeText = hours > 0 ?
-                String.format(Locale.getDefault(), "%dh %02dm", hours, minutes) :
-                String.format(Locale.getDefault(), "%d minutes", minutes);
-        timerDisplay.setText(timeText);
+    @Override
+    public void onTimeSet(long durationInMillis) {
+        // Convert milliseconds to minutes (minimum 1 minute)
+        selectedMinutes = (int) Math.max(durationInMillis / (60 * 1000), 1);
+        updateTimerDisplay();
     }
 }
