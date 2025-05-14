@@ -55,14 +55,12 @@ public class LockSettingActivity extends BaseActivity implements CustomTimePicke
         exitBtn = findViewById(R.id.exitBtn);
         fragmentContainerView = findViewById(R.id.fragmentContainerView);
 
-//        if (!isMyLauncherDefault()) {
-//            // Only open launcher selection if not default launcher
-//            Intent homeSettingsIntent = new Intent(Settings.ACTION_HOME_SETTINGS);
-//            startActivity(homeSettingsIntent);
-//        }
         if (!isMyLauncherDefault()) {
-            showHomeSettingsDialog();
+            // Only open launcher selection if not default launcher
+            Intent homeSettingsIntent = new Intent(Settings.ACTION_HOME_SETTINGS);
+            startActivity(homeSettingsIntent);
         }
+
 
         timePickerBtn.setOnClickListener(v -> {
             CustomTimePickerFragment timePickerFragment = new CustomTimePickerFragment();
@@ -109,16 +107,11 @@ public class LockSettingActivity extends BaseActivity implements CustomTimePicke
         updateUI();
     }
 
-    private void showHomeSettingsDialog() {
-        HomeSettingsDialogFragment dialog = HomeSettingsDialogFragment.newInstance();
-        dialog.show(getSupportFragmentManager(), "HomeSettingsDialog");
-    }
     @Override
     public void onHomeSettingsSelected() {
-        // User chose to open settings
-        Intent homeSettingsIntent = new Intent(Settings.ACTION_HOME_SETTINGS);
-        startActivity(homeSettingsIntent);
+
     }
+
 
 //    @Override
 //    public void onCancelSelected() {

@@ -37,8 +37,9 @@ public class UnlockActivity extends BaseActivity {
 
     @Override
     public void onHomeSettingsSelected() {
-        
+
     }
+
 
     private void startTimer() {
         if (timeLeftInMillis <= 0) {

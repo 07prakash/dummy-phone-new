@@ -64,9 +64,6 @@ public class MainPagerActivity extends BaseActivity {
 
     @Override
     public void onHomeSettingsSelected() {
-        // User chose to open settings
-        Intent homeSettingsIntent = new Intent(Settings.ACTION_HOME_SETTINGS);
-        startActivity(homeSettingsIntent);
 
     }
 
