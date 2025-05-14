@@ -15,7 +15,7 @@ import java.text.SimpleDateFormat;
 import java.util.Date;
 import java.util.Locale;
 
-public class HomeFragment extends Fragment {
+public class HomeFragment extends BaseFragment {
 
     private TextView timeTextView, dateTextView;
     private Handler timeHandler = new Handler();

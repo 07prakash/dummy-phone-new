@@ -21,9 +21,11 @@
         tools:targetApi="31">
         <activity
             android:name=".UnlockActivity"
+            android:launchMode="singleTask"
             android:exported="false" />
         <activity
             android:name=".LockSettingActivity"
+            android:launchMode="singleTask"
             android:exported="false" />
         <activity
             android:name=".MainPagerActivity"

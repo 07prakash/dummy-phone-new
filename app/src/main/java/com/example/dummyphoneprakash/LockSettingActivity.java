@@ -9,21 +9,20 @@ import android.content.pm.PackageManager;
 import android.os.Build;
 import android.os.Bundle;
 import android.provider.Settings;
+import android.util.Log;
 import android.view.View;
 import android.widget.Button;
 import android.widget.TextView;
 import android.widget.Toast;
 
-import androidx.appcompat.app.AppCompatActivity;
 import androidx.fragment.app.FragmentContainerView;
 import androidx.preference.PreferenceManager;
 
 import java.util.ArrayList;
 import java.util.List;
-import java.util.Locale;
 import java.util.concurrent.TimeUnit;
 
-public class LockSettingActivity extends AppCompatActivity implements CustomTimePickerFragment.TimePickerListener {
+public class LockSettingActivity extends BaseActivity implements CustomTimePickerFragment.TimePickerListener {
 
     // UI Components
     private TextView timerDisplay, choostext;
@@ -56,10 +55,13 @@ public class LockSettingActivity extends AppCompatActivity implements CustomTime
         exitBtn = findViewById(R.id.exitBtn);
         fragmentContainerView = findViewById(R.id.fragmentContainerView);
 
+//        if (!isMyLauncherDefault()) {
+//            // Only open launcher selection if not default launcher
+//            Intent homeSettingsIntent = new Intent(Settings.ACTION_HOME_SETTINGS);
+//            startActivity(homeSettingsIntent);
+//        }
         if (!isMyLauncherDefault()) {
-            // Only open launcher selection if not default launcher
-            Intent homeSettingsIntent = new Intent(Settings.ACTION_HOME_SETTINGS);
-            startActivity(homeSettingsIntent);
+            showHomeSettingsDialog();
         }
 
         timePickerBtn.setOnClickListener(v -> {
@@ -106,6 +108,25 @@ public class LockSettingActivity extends AppCompatActivity implements CustomTime
         // Update UI based on current state
         updateUI();
     }
+
+    private void showHomeSettingsDialog() {
+        HomeSettingsDialogFragment dialog = HomeSettingsDialogFragment.newInstance();
+        dialog.show(getSupportFragmentManager(), "HomeSettingsDialog");
+    }
+    @Override
+    public void onHomeSettingsSelected() {
+        // User chose to open settings
+        Intent homeSettingsIntent = new Intent(Settings.ACTION_HOME_SETTINGS);
+        startActivity(homeSettingsIntent);
+    }
+
+//    @Override
+//    public void onCancelSelected() {
+//        // User cancelled
+//        Log.d("HomeSettings", "User cancelled launcher change");
+//        // You might want to finish the activity or show a warning
+//        finish();
+//    }
 
 
 

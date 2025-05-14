@@ -6,10 +6,10 @@ import android.os.Bundle;
 import android.os.CountDownTimer;
 import android.widget.Button;
 import android.widget.TextView;
-import androidx.appcompat.app.AppCompatActivity;
+
 import androidx.preference.PreferenceManager;
 
-public class UnlockActivity extends AppCompatActivity {
+public class UnlockActivity extends BaseActivity {
     private TextView countdownText;
     private CountDownTimer countDownTimer;
     private long timeLeftInMillis;
@@ -35,6 +35,11 @@ public class UnlockActivity extends AppCompatActivity {
         earlyAccessBtn.setOnClickListener(v -> unlockDevice());
     }
 
+    @Override
+    public void onHomeSettingsSelected() {
+        
+    }
+
     private void startTimer() {
         if (timeLeftInMillis <= 0) {
             unlockDevice();
@@ -50,6 +55,7 @@ public class UnlockActivity extends AppCompatActivity {
 
             @Override
             public void onFinish() {
+                showTimeEndDialog();
                 unlockDevice();
             }
         }.start();
@@ -86,7 +92,7 @@ public class UnlockActivity extends AppCompatActivity {
                 .putLong("lock_duration", 0)
                 .apply();
 
-        startActivity(new Intent(this, MainPagerActivity.class));
+        startActivity(new Intent(this,LockSettingActivity.class));
         finish();
     }
 

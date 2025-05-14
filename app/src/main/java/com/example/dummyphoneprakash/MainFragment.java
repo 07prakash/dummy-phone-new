@@ -20,7 +20,7 @@ import androidx.recyclerview.widget.RecyclerView;
 import java.util.ArrayList;
 import java.util.List;
 
-public class MainFragment extends Fragment implements AppAdapter.AppClickListener {
+public class MainFragment extends BaseFragment implements AppAdapter.AppClickListener {
     private RecyclerView appsRecyclerView;
     private AppAdapter appAdapter;
     private List<AppInfo> apps = new ArrayList<>();

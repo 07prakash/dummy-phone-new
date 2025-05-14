@@ -17,7 +17,7 @@ import androidx.viewpager2.widget.ViewPager2;
 import java.util.ArrayList;
 import java.util.List;
 
-public class MainPagerActivity extends AppCompatActivity {
+public class MainPagerActivity extends BaseActivity {
     private ViewPager2 viewPager;
 
     @Override
@@ -60,6 +60,14 @@ public class MainPagerActivity extends AppCompatActivity {
         if (isMyLauncherDefault()) {
             viewPager.setCurrentItem(0); // Ensure HomeFragment is visible
         }
+    }
+
+    @Override
+    public void onHomeSettingsSelected() {
+        // User chose to open settings
+        Intent homeSettingsIntent = new Intent(Settings.ACTION_HOME_SETTINGS);
+        startActivity(homeSettingsIntent);
+
     }
 
     private boolean isMyLauncherDefault() {
