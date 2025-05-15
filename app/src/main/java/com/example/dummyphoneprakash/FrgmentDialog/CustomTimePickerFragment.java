@@ -111,7 +111,7 @@ public class CustomTimePickerFragment extends DialogFragment {
         long hours = TimeUnit.MILLISECONDS.toHours(selectedDuration) % 24;
         long minutes = TimeUnit.MILLISECONDS.toMinutes(selectedDuration) % 60;
 
-        StringBuilder timeText = new StringBuilder("Selected: ");
+        StringBuilder timeText = new StringBuilder("Selected Duration: ");
         if (months > 0) timeText.append(months).append("mo ");
         if (days > 0) timeText.append(days).append("d ");
         if (hours > 0) timeText.append(hours).append("h ");

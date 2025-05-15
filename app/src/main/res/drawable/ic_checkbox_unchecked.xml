@@ -6,11 +6,11 @@
     <!-- Grey border circle (unchecked state) -->
     <path
         android:pathData="M12,2C6.48,2 2,6.48 2,12s4.48,10 10,10 10,-4.48 10,-10S17.52,2 12,2z"
-        android:fillColor="#9A757A7E" /> <!-- Material Blue 500 -->
+        android:fillColor="#9A757A7E" />
 
     <path
         android:pathData="M12,2C6.48,2 2,6.48 2,12s4.48,10 10,10 10,-4.48 10,-10S17.52,2 12,2z"
         android:strokeWidth="1"
-        android:strokeColor="#A7041064"
+        android:strokeColor="#9CF5F5F5"
         android:fillColor="@android:color/transparent"/>
 </vector>

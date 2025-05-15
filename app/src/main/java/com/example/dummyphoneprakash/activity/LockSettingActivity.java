@@ -14,6 +14,7 @@ import android.widget.Button;
 import android.widget.TextView;
 import android.widget.Toast;
 
+import androidx.appcompat.app.AlertDialog;
 import androidx.fragment.app.FragmentContainerView;
 import androidx.preference.PreferenceManager;
 
@@ -65,21 +66,26 @@ public class LockSettingActivity extends BaseActivity implements CustomTimePicke
         });
 
         lockBtn.setOnClickListener(v -> {
-            checkAccessibilityPermission();
+            // First check accessibility permission with a dialog
+            new AlertDialog.Builder(LockSettingActivity.this)
+                    .setTitle("Permission Required")
+                    .setMessage("dummy Phone needs accessibility permission to monitor and block apps. Please enable it in the next screen.")
+                    .setPositiveButton("Go to Settings", (dialog, which) -> {
+                        checkAccessibilityPermission();
+                        // Save lock state and duration
+                        long currentTime = System.currentTimeMillis();
+                        long durationMillis = selectedMinutes * 60 * 1000L;
 
-            // Save lock state and duration
-            long currentTime = System.currentTimeMillis();
-            long durationMillis = selectedMinutes * 60 * 1000L;
+                        prefs.edit()
+                                .putLong("lock_start_time", currentTime)
+                                .putLong("lock_duration", durationMillis)
+                                .putBoolean("is_locked", true)
+                                .apply();
+                    })
+                    .setNegativeButton("Cancel", null)
+                    .show();
 
-            prefs.edit()
-                    .putLong("lock_start_time", currentTime)
-                    .putLong("lock_duration", durationMillis)
-                    .putBoolean("is_locked", true)
-                    .apply();
 
-            // Start MainPagerActivity instead of UnlockActivity
-//            startActivity(new Intent(LockSettingActivity.this, MainPagerActivity.class));
-//            finish();
         });
 
         // In LockSettingActivity's unlockBtn click listener:
@@ -129,7 +135,7 @@ public class LockSettingActivity extends BaseActivity implements CustomTimePicke
 
         if (enabledServices == null || !enabledServices.contains(serviceName)) {
             Toast.makeText(this,
-                    "Please enable App Blocker in Accessibility Settings",
+                    "Please enable dummy phone in Accessibility Settings",
                     Toast.LENGTH_LONG).show();
             startActivity(new Intent(Settings.ACTION_ACCESSIBILITY_SETTINGS));
         }

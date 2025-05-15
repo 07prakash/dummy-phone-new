@@ -16,14 +16,12 @@
         android:id="@+id/timePickerBtn"
         android:layout_width="200dp"
         android:layout_height="50dp"
-        android:layout_marginTop="40dp"
+        android:layout_marginTop="30dp"
         android:backgroundTint="#009688"
-
         android:text="Set Lock Duration"
         android:textColor="@color/white"
         android:textSize="18dp"
-        app:cornerRadius="5dp"
-        app:iconPadding="8dp"
+        app:cornerRadius="7dp"
         app:layout_constraintEnd_toEndOf="parent"
         app:layout_constraintHorizontal_bias="0.496"
         app:layout_constraintStart_toStartOf="parent"
@@ -43,15 +41,16 @@
 
     <Button
         android:id="@+id/lockBtn"
-        android:layout_width="150dp"
-        android:layout_height="wrap_content"
-        android:backgroundTint="#4CAF50"
+        android:layout_width="130dp"
+        android:layout_height="50dp"
+        android:backgroundTint="@color/green"
         android:text="LOCK NOW"
         android:textColor="@android:color/white"
+        android:textSize="16sp"
         android:textStyle="bold"
         app:layout_constraintBottom_toBottomOf="@+id/exitBtn"
         app:layout_constraintEnd_toEndOf="parent"
-        app:layout_constraintHorizontal_bias="1.0"
+        app:layout_constraintHorizontal_bias="0.93"
         app:layout_constraintStart_toEndOf="@+id/exitBtn"
         app:layout_constraintTop_toTopOf="@+id/exitBtn"
         app:layout_constraintVertical_bias="0.0" />
@@ -73,17 +72,18 @@
 
     <Button
         android:id="@+id/exitBtn"
-        android:layout_width="110dp"
-        android:layout_height="wrap_content"
+        android:layout_width="130dp"
+        android:layout_height="50dp"
         android:layout_gravity="end"
         android:layout_marginStart="8dp"
         android:backgroundTint="#FF0000"
         android:text="EXIT"
         android:textColor="@android:color/white"
+        android:textSize="16sp"
         app:layout_constraintBottom_toBottomOf="parent"
         app:layout_constraintStart_toStartOf="parent"
         app:layout_constraintTop_toBottomOf="@+id/timePickerBtn"
-        app:layout_constraintVertical_bias="0.615" />
+        app:layout_constraintVertical_bias="0.62" />
 
     <TextView
         android:id="@+id/choostext"
