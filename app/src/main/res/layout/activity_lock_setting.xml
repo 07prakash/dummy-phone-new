@@ -6,7 +6,7 @@
     android:layout_height="match_parent"
     android:background="@color/black"
     android:orientation="vertical"
-    android:padding="24dp"
+    android:padding="8dp"
     android:gravity="center_horizontal">
 
     <!-- Existing views remain the same -->
@@ -107,12 +107,13 @@
 
         android:name="com.example.dummyphoneprakash.fragments.LockFragment"
         android:layout_width="0dp"
-        android:layout_height="350dp"
-        android:layout_marginStart="1dp"
-        android:layout_marginTop="4dp"
+        android:layout_height="420dp"
+        android:layout_marginStart="4dp"
+        android:layout_marginTop="1dp"
         android:layout_marginEnd="1dp"
+
         app:layout_constraintEnd_toEndOf="parent"
-        app:layout_constraintHorizontal_bias="0.0"
+        app:layout_constraintHorizontal_bias="1.0"
         app:layout_constraintStart_toStartOf="parent"
         app:layout_constraintTop_toBottomOf="@+id/choostext" />
 

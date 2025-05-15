@@ -174,6 +174,12 @@ public class LockAppAdapter extends RecyclerView.Adapter<LockAppAdapter.AppViewH
             checkBox.setOnCheckedChangeListener((buttonView, checked) -> {
                 listener.onAppChecked(packageName, checked);
             });
+
+            // AppIcon click should toggle the checkbox
+            appIcon.setOnClickListener(v -> {
+                boolean newChecked = !checkBox.isChecked();
+                checkBox.setChecked(newChecked); // This triggers the above listener
+            });
         }
     }
 }
