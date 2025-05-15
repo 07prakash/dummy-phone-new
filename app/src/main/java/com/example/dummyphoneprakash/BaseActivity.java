@@ -2,14 +2,17 @@ package com.example.dummyphoneprakash;
 
 import android.content.Intent;
 import android.content.SharedPreferences;
+import android.os.Build;
 import android.os.Bundle;
 import androidx.appcompat.app.AppCompatActivity;
+import androidx.core.content.ContextCompat;
 import androidx.preference.PreferenceManager;
 
 import android.content.Context;
 import android.content.SharedPreferences;
 import android.os.Bundle;
 import android.provider.Settings;
+import android.view.Window;
 
 import androidx.appcompat.app.AppCompatActivity;
 import androidx.fragment.app.Fragment;
@@ -20,6 +23,11 @@ public abstract class BaseActivity extends AppCompatActivity implements TimeEndD
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         checkTimeEnded();
+        if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.LOLLIPOP) {
+            Window window = getWindow();
+            window.setNavigationBarColor(ContextCompat.getColor(this, R.color.black));
+        }
+
     }
 
     @Override

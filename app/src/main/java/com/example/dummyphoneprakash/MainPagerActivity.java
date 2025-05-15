@@ -25,6 +25,10 @@ public class MainPagerActivity extends BaseActivity {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_main_pager);
 
+        if (WelcomeDialogFragment.shouldShow(this)) {
+            new WelcomeDialogFragment().show(getSupportFragmentManager(), "welcome_dialog");
+        }
+
 //        Intent intent = new Intent(Settings.ACTION_USAGE_ACCESS_SETTINGS);
 //        startActivity(intent);
 

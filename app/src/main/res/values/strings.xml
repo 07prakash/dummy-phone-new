@@ -7,4 +7,5 @@
     <string name="go_to_lock_settings">Go to Lock Settings</string>
     <string name="save_app_selection">Save App Selection</string>
     <string name="accessibility_service_description">Blocks unauthorized apps</string>
+    <string name="i_agree_to_the_privacy_policy_and_terms">I agree to the Privacy Policy and Terms</string>
 </resources>
