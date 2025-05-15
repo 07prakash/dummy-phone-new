@@ -1,4 +1,4 @@
-package com.example.dummyphoneprakash;
+package com.example.dummyphoneprakash.activity;
 
 
 
@@ -9,11 +9,13 @@ import android.content.Intent;
 import android.content.IntentFilter;
 import android.content.pm.PackageManager;
 import android.os.Bundle;
-import android.provider.Settings;
-import android.widget.Toast;
 
-import androidx.appcompat.app.AppCompatActivity;
 import androidx.viewpager2.widget.ViewPager2;
+
+import com.example.dummyphoneprakash.FrgmentDialog.WelcomeDialogFragment;
+import com.example.dummyphoneprakash.R;
+import com.example.dummyphoneprakash.adapter.ViewPagerAdapter;
+
 import java.util.ArrayList;
 import java.util.List;
 

@@ -1,9 +1,8 @@
-package com.example.dummyphoneprakash;
+package com.example.dummyphoneprakash.FrgmentDialog;
 
 import android.app.Dialog;
 import android.content.Context;
 import android.os.Bundle;
-import android.os.CountDownTimer;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.widget.NumberPicker;
@@ -13,8 +12,8 @@ import androidx.annotation.NonNull;
 import androidx.appcompat.app.AlertDialog;
 import androidx.fragment.app.DialogFragment;
 
-import java.util.Calendar;
-import java.util.Locale;
+import com.example.dummyphoneprakash.R;
+
 import java.util.concurrent.TimeUnit;
 
 public class CustomTimePickerFragment extends DialogFragment {

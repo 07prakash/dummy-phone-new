@@ -1,4 +1,4 @@
-package com.example.dummyphoneprakash;
+package com.example.dummyphoneprakash.fragments;
 
 
 
@@ -10,7 +10,10 @@ import android.view.View;
 import android.view.ViewGroup;
 import android.widget.Button;
 import android.widget.TextView;
-import androidx.fragment.app.Fragment;
+
+import com.example.dummyphoneprakash.activity.LockSettingActivity;
+import com.example.dummyphoneprakash.R;
+
 import java.text.SimpleDateFormat;
 import java.util.Date;
 import java.util.Locale;

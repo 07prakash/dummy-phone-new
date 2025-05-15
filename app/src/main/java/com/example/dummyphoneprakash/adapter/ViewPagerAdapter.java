@@ -1,4 +1,4 @@
-package com.example.dummyphoneprakash;
+package com.example.dummyphoneprakash.adapter;
 
 // ViewPagerAdapter.java
 
@@ -7,6 +7,9 @@ import androidx.annotation.NonNull;
 import androidx.fragment.app.Fragment;
 import androidx.fragment.app.FragmentActivity;
 import androidx.viewpager2.adapter.FragmentStateAdapter;
+
+import com.example.dummyphoneprakash.fragments.HomeFragment;
+import com.example.dummyphoneprakash.fragments.MainFragment;
 
 public class ViewPagerAdapter extends FragmentStateAdapter {
     public ViewPagerAdapter(@NonNull FragmentActivity fragmentActivity) {

@@ -1,4 +1,4 @@
-package com.example.dummyphoneprakash;
+package com.example.dummyphoneprakash.FrgmentDialog;
 
 import static android.app.PendingIntent.getActivity;
 

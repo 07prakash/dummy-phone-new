@@ -1,4 +1,4 @@
-package com.example.dummyphoneprakash;
+package com.example.dummyphoneprakash.adapter;
 
 import android.view.LayoutInflater;
 import android.view.View;
@@ -7,6 +7,10 @@ import android.widget.ImageView;
 import android.widget.TextView;
 import androidx.annotation.NonNull;
 import androidx.recyclerview.widget.RecyclerView;
+
+import com.example.dummyphoneprakash.AppInfo;
+import com.example.dummyphoneprakash.R;
+
 import java.util.List;
 
 public class AppAdapter extends RecyclerView.Adapter<AppAdapter.AppViewHolder> {

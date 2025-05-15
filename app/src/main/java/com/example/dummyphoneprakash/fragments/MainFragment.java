@@ -1,4 +1,4 @@
-package com.example.dummyphoneprakash;
+package com.example.dummyphoneprakash.fragments;
 
 
 
@@ -14,9 +14,15 @@ import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
-import androidx.fragment.app.Fragment;
+
 import androidx.recyclerview.widget.GridLayoutManager;
 import androidx.recyclerview.widget.RecyclerView;
+
+import com.example.dummyphoneprakash.adapter.AppAdapter;
+import com.example.dummyphoneprakash.AppInfo;
+import com.example.dummyphoneprakash.R;
+import com.example.dummyphoneprakash.SharedPreferencesHelper;
+
 import java.util.ArrayList;
 import java.util.List;
 

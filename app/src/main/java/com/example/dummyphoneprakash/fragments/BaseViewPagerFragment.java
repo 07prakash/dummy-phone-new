@@ -1,13 +1,16 @@
-package com.example.dummyphoneprakash;
+package com.example.dummyphoneprakash.fragments;
 
 import android.content.Context;
 import android.content.Intent;
 import android.content.SharedPreferences;
-import android.provider.Settings;
 
 import androidx.annotation.NonNull;
 import androidx.fragment.app.Fragment;
 import androidx.preference.PreferenceManager;
+
+import com.example.dummyphoneprakash.activity.BaseActivity;
+import com.example.dummyphoneprakash.FrgmentDialog.TimeEndDialog;
+import com.example.dummyphoneprakash.activity.UnlockActivity;
 
 public abstract class BaseViewPagerFragment extends Fragment implements TimeEndDialog.TimeEndListener {
 

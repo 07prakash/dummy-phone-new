@@ -1,4 +1,4 @@
-package com.example.dummyphoneprakash;
+package com.example.dummyphoneprakash.activity;
 
 import android.content.Intent;
 import android.content.SharedPreferences;
@@ -8,14 +8,12 @@ import androidx.appcompat.app.AppCompatActivity;
 import androidx.core.content.ContextCompat;
 import androidx.preference.PreferenceManager;
 
-import android.content.Context;
-import android.content.SharedPreferences;
-import android.os.Bundle;
-import android.provider.Settings;
 import android.view.Window;
 
-import androidx.appcompat.app.AppCompatActivity;
 import androidx.fragment.app.Fragment;
+
+import com.example.dummyphoneprakash.FrgmentDialog.TimeEndDialog;
+import com.example.dummyphoneprakash.R;
 
 public abstract class BaseActivity extends AppCompatActivity implements TimeEndDialog.TimeEndListener {
 

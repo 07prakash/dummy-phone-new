@@ -1,4 +1,4 @@
-package com.example.dummyphoneprakash;
+package com.example.dummyphoneprakash.FrgmentDialog;
 
 import android.content.Context;
 import android.content.Intent;
@@ -13,14 +13,14 @@ import android.text.style.ClickableSpan;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
-import android.view.Window;
 import android.widget.Button;
-import android.widget.CompoundButton;
 import android.widget.TextView;
 
 import androidx.annotation.NonNull;
 import androidx.annotation.Nullable;
 import androidx.fragment.app.DialogFragment;
+
+import com.example.dummyphoneprakash.R;
 import com.google.android.material.checkbox.MaterialCheckBox;
 
 public class WelcomeDialogFragment extends DialogFragment {

@@ -1,4 +1,4 @@
-package com.example.dummyphoneprakash;
+package com.example.dummyphoneprakash.activity;
 
 import android.content.Intent;
 import android.content.SharedPreferences;
@@ -11,6 +11,8 @@ import android.widget.Button;
 import android.widget.TextView;
 
 import androidx.preference.PreferenceManager;
+
+import com.example.dummyphoneprakash.R;
 
 public class UnlockActivity extends BaseActivity {
     private TextView countdownText;
@@ -110,7 +112,7 @@ public class UnlockActivity extends BaseActivity {
                 .putLong("lock_duration", 0)
                 .apply();
 
-        startActivity(new Intent(this,LockSettingActivity.class));
+        startActivity(new Intent(this, LockSettingActivity.class));
         finish();
     }
 

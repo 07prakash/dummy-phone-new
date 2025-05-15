@@ -1,4 +1,4 @@
-package com.example.dummyphoneprakash;
+package com.example.dummyphoneprakash.activity;
 
 import android.app.ActivityManager;
 import android.content.ComponentName;
@@ -9,7 +9,6 @@ import android.content.pm.PackageManager;
 import android.os.Build;
 import android.os.Bundle;
 import android.provider.Settings;
-import android.util.Log;
 import android.view.View;
 import android.widget.Button;
 import android.widget.TextView;
@@ -17,6 +16,9 @@ import android.widget.Toast;
 
 import androidx.fragment.app.FragmentContainerView;
 import androidx.preference.PreferenceManager;
+
+import com.example.dummyphoneprakash.FrgmentDialog.CustomTimePickerFragment;
+import com.example.dummyphoneprakash.R;
 
 import java.util.ArrayList;
 import java.util.List;

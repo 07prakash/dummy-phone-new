@@ -1,5 +1,5 @@
 // LockAppAdapter.java (updated to allow essential app toggling)
-package com.example.dummyphoneprakash;
+package com.example.dummyphoneprakash.adapter;
 
 import android.content.pm.PackageManager;
 import android.content.pm.ResolveInfo;
@@ -11,9 +11,11 @@ import android.widget.ImageView;
 import android.widget.TextView;
 import androidx.annotation.NonNull;
 import androidx.recyclerview.widget.RecyclerView;
+
+import com.example.dummyphoneprakash.R;
+
 import java.util.ArrayList;
 import java.util.Collections;
-import java.util.Comparator;
 import java.util.HashSet;
 import java.util.List;
 import java.util.Set;

@@ -20,15 +20,15 @@
         android:theme="@style/Theme.Dm"
         tools:targetApi="31">
         <activity
-            android:name=".UnlockActivity"
+            android:name=".activity.UnlockActivity"
             android:launchMode="singleTask"
             android:exported="false" />
         <activity
-            android:name=".LockSettingActivity"
+            android:name=".activity.LockSettingActivity"
             android:launchMode="singleTask"
             android:exported="false" />
         <activity
-            android:name=".MainPagerActivity"
+            android:name=".activity.MainPagerActivity"
             android:launchMode="singleTask"
             android:exported="true">
             <intent-filter>
