@@ -44,6 +44,6 @@ dependencies {
     androidTestImplementation libs.espresso.core
 
     implementation libs.cardview
-    implementation libs.billing
+
 
 }
