@@ -55,11 +55,6 @@ public class LockSettingActivity extends BaseActivity implements CustomTimePicke
         exitBtn = findViewById(R.id.exitBtn);
         fragmentContainerView = findViewById(R.id.fragmentContainerView);
 
-        if (!isMyLauncherDefault()) {
-            // Only open launcher selection if not default launcher
-            Intent homeSettingsIntent = new Intent(Settings.ACTION_HOME_SETTINGS);
-            startActivity(homeSettingsIntent);
-        }
 
 
         timePickerBtn.setOnClickListener(v -> {
@@ -225,5 +220,15 @@ public class LockSettingActivity extends BaseActivity implements CustomTimePicke
         // Convert milliseconds to minutes (minimum 1 minute)
         selectedMinutes = (int) Math.max(durationInMillis / (60 * 1000), 1);
         updateTimerDisplay();
+    }
+    @Override
+    protected void onResume() {
+        super.onResume();
+        if (!isMyLauncherDefault()) {
+            // Only open launcher selection if not default launcher
+            Intent homeSettingsIntent = new Intent(Settings.ACTION_HOME_SETTINGS);
+            startActivity(homeSettingsIntent);
+        }
+
     }
 }
