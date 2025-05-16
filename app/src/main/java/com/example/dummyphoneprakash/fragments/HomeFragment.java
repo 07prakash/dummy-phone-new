@@ -2,6 +2,7 @@ package com.example.dummyphoneprakash.fragments;
 
 
 
+import android.content.Context;
 import android.content.Intent;
 import android.os.Bundle;
 import android.os.Handler;
@@ -10,7 +11,10 @@ import android.view.View;
 import android.view.ViewGroup;
 import android.widget.Button;
 import android.widget.TextView;
+import android.widget.Toast;
 
+import com.example.dummyphoneprakash.NotificationPermissionHelper;
+import com.example.dummyphoneprakash.SharedPreferencesHelper;
 import com.example.dummyphoneprakash.activity.LockSettingActivity;
 import com.example.dummyphoneprakash.R;
 
@@ -32,7 +36,7 @@ public class HomeFragment extends BaseFragment {
         timeTextView = view.findViewById(R.id.timeTextView);
         dateTextView = view.findViewById(R.id.dateTextView);
         Button lockSettingsButton = view.findViewById(R.id.lockSettingsButton);
-
+        setupNotificationBlocking();
         updateTime();
         startTimeUpdates();
 
@@ -66,4 +70,38 @@ public class HomeFragment extends BaseFragment {
         super.onDestroyView();
         timeHandler.removeCallbacks(timeRunnable);
     }
+    private void setupNotificationBlocking() {
+        // Use requireContext() instead of 'this' for Fragment context
+        Context context = requireContext();
+
+        if (!NotificationPermissionHelper.isNotificationServiceEnabled(context)) {
+            NotificationPermissionHelper.requestNotificationPermission(requireActivity());
+        } else {
+            NotificationPermissionHelper.ensureServiceBound(context);
+            enableNotificationBlocking();
+        }
+    }
+
+    private void enableNotificationBlocking() {
+        SharedPreferencesHelper prefsHelper = new SharedPreferencesHelper(requireContext());
+        prefsHelper.setBlockingActive(false);
+
+
+    }
+
+    private void disableNotificationBlocking() {
+        SharedPreferencesHelper prefsHelper = new SharedPreferencesHelper(requireContext());
+        prefsHelper.setBlockingActive(false);
+
+        Toast.makeText(requireContext(), "Notification blocking disabled", Toast.LENGTH_SHORT).show();
+    }
+
+    @Override
+    public void onResume() {
+        super.onResume();
+        if (NotificationPermissionHelper.isNotificationServiceEnabled(requireContext())) {
+            NotificationPermissionHelper.ensureServiceBound(requireContext());
+        }
+    }
+
 }

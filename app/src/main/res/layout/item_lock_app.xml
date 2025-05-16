@@ -5,6 +5,7 @@
     android:layout_width="wrap_content"
     android:layout_height="wrap_content"
     android:orientation="vertical"
+    android:id="@+id/cardView"
     android:gravity="center"
     android:padding="10dp">
 
@@ -36,7 +37,8 @@
         android:id="@+id/appCheckBox"
         android:layout_width="23dp"
         android:layout_height="23dp"
-        android:layout_marginBottom="28dp"
+        android:layout_marginStart="-7dp"
+        android:layout_marginBottom="10dp"
         android:background="@drawable/checkbox_selector"
         android:button="@null"
         android:padding="8dp"

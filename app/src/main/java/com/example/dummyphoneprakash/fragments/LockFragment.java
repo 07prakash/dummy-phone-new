@@ -1,4 +1,4 @@
-// LockFragment.java (unchanged from previous version)
+
 package com.example.dummyphoneprakash.fragments;
 
 import android.content.Intent;

@@ -10,6 +10,7 @@ public class SharedPreferencesHelper {
 
     private static final String KEY_ALLOWED_APPS = "allowed_apps";
     private static final String KEY_ESSENTIAL_APPS = "essential_apps";
+    private static final String KEY_IS_LOCKED = "is_locked";
 
     // Default essential apps that cannot be blocked
     private static final Set<String> DEFAULT_ESSENTIAL_APPS = new HashSet<String>() {{
@@ -41,6 +42,24 @@ public class SharedPreferencesHelper {
         add("com.miui.contacts");
         add("com.coloros.contacts");
         add("com.vivo.contact");
+
+        add("com.google.android.deskclock");
+        add("com.sec.android.app.clockpackage");
+        add("com.miui.clock");
+        add("com.oneplus.deskclock");
+        add("com.coloros.alarmclock");
+        add("com.vivo.alarmclock");
+        add("com.huawei.deskclock");
+        add("com.motorola.deskclock");
+
+        add("com.android.calculator2");
+        add("com.sec.android.app.popupcalculator");
+        add("com.miui.calculator");
+        add("com.oneplus.calculator");
+        add("com.coloros.calculator");
+        add("com.vivo.calculator");
+        add("com.huawei.calculator");
+        add("com.motorola.calculator");
 
 
         add("com.example.dummyphoneprakash");
@@ -94,12 +113,15 @@ public class SharedPreferencesHelper {
 
     }};
 
+
     private final SharedPreferences prefs;
 
     public SharedPreferencesHelper(Context context) {
         prefs = PreferenceManager.getDefaultSharedPreferences(context);
+        initializeEssentialApps();
+    }
 
-        // Initialize essential apps if not set
+    private void initializeEssentialApps() {
         if (!prefs.contains(KEY_ESSENTIAL_APPS)) {
             prefs.edit()
                     .putStringSet(KEY_ESSENTIAL_APPS, DEFAULT_ESSENTIAL_APPS)
@@ -107,8 +129,15 @@ public class SharedPreferencesHelper {
         }
     }
 
+    public void setBlockingActive(boolean isActive) {
+        prefs.edit().putBoolean(KEY_IS_LOCKED, isActive).apply();
+    }
+
+    public boolean isBlockingActive() {
+        return prefs.getBoolean(KEY_IS_LOCKED, false);
+    }
+
     public void saveAllowedApps(Set<String> allowedApps, Set<String> essentialApps) {
-        // Combine with default essential apps that should never be removed
         Set<String> finalEssentialApps = new HashSet<>(essentialApps);
         finalEssentialApps.addAll(DEFAULT_ESSENTIAL_APPS);
 
@@ -123,7 +152,6 @@ public class SharedPreferencesHelper {
     }
 
     public Set<String> getEssentialApps() {
-        // Always include default essential apps
         Set<String> savedEssential = prefs.getStringSet(KEY_ESSENTIAL_APPS, new HashSet<>());
         Set<String> allEssential = new HashSet<>(savedEssential);
         allEssential.addAll(DEFAULT_ESSENTIAL_APPS);
@@ -135,4 +163,5 @@ public class SharedPreferencesHelper {
         Set<String> essential = getEssentialApps();
         return allowed.contains(packageName) || essential.contains(packageName);
     }
+
 }
