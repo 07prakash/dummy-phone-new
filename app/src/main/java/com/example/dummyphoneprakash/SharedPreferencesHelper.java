@@ -3,11 +3,11 @@ package com.example.dummyphoneprakash;
 import android.content.Context;
 import android.content.SharedPreferences;
 import androidx.preference.PreferenceManager;
+
 import java.util.HashSet;
 import java.util.Set;
 
 public class SharedPreferencesHelper {
-
     private static final String KEY_ALLOWED_APPS = "allowed_apps";
     private static final String KEY_ESSENTIAL_APPS = "essential_apps";
     private static final String KEY_IS_LOCKED = "is_locked";
@@ -113,7 +113,6 @@ public class SharedPreferencesHelper {
 
     }};
 
-
     private final SharedPreferences prefs;
 
     public SharedPreferencesHelper(Context context) {
@@ -138,12 +137,12 @@ public class SharedPreferencesHelper {
     }
 
     public void saveAllowedApps(Set<String> allowedApps, Set<String> essentialApps) {
-        Set<String> finalEssentialApps = new HashSet<>(essentialApps);
-        finalEssentialApps.addAll(DEFAULT_ESSENTIAL_APPS);
+        Set<String> filteredEssential = new HashSet<>(essentialApps);
+        filteredEssential.retainAll(DEFAULT_ESSENTIAL_APPS);
 
         prefs.edit()
                 .putStringSet(KEY_ALLOWED_APPS, new HashSet<>(allowedApps))
-                .putStringSet(KEY_ESSENTIAL_APPS, finalEssentialApps)
+                .putStringSet(KEY_ESSENTIAL_APPS, filteredEssential)
                 .apply();
     }
 
@@ -152,10 +151,7 @@ public class SharedPreferencesHelper {
     }
 
     public Set<String> getEssentialApps() {
-        Set<String> savedEssential = prefs.getStringSet(KEY_ESSENTIAL_APPS, new HashSet<>());
-        Set<String> allEssential = new HashSet<>(savedEssential);
-        allEssential.addAll(DEFAULT_ESSENTIAL_APPS);
-        return allEssential;
+        return prefs.getStringSet(KEY_ESSENTIAL_APPS, new HashSet<>());
     }
 
     public boolean isAppAllowed(String packageName) {
@@ -163,5 +159,4 @@ public class SharedPreferencesHelper {
         Set<String> essential = getEssentialApps();
         return allowed.contains(packageName) || essential.contains(packageName);
     }
-
 }

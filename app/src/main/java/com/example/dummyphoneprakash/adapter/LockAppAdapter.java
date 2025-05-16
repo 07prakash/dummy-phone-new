@@ -1,8 +1,9 @@
-// LockAppAdapter.java (updated to allow essential app toggling)
 package com.example.dummyphoneprakash.adapter;
 
 import android.content.pm.PackageManager;
 import android.content.pm.ResolveInfo;
+import android.os.Handler;
+import android.os.Looper;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
@@ -30,10 +31,11 @@ public class LockAppAdapter extends RecyclerView.Adapter<LockAppAdapter.AppViewH
     private List<ResolveInfo> filteredApps;
     private final PackageManager pm;
     private final Set<String> selectedRegularApps;
-    private final Set<String> selectedEssentialApps; // Tracks essential app selections
-    private final Set<String> essentialApps; // Original essential apps set
+    private final Set<String> selectedEssentialApps;
+    private final Set<String> essentialApps;
     private OnAppCheckedListener checkedListener;
     private final Set<String> excludedPackages;
+    private final Handler handler = new Handler(Looper.getMainLooper());
 
     public LockAppAdapter(List<ResolveInfo> apps,
                           PackageManager pm,
@@ -43,7 +45,7 @@ public class LockAppAdapter extends RecyclerView.Adapter<LockAppAdapter.AppViewH
         this.pm = pm;
         this.selectedRegularApps = new HashSet<>(initiallySelected);
         this.essentialApps = new HashSet<>(essentialApps);
-        this.selectedEssentialApps = new HashSet<>(essentialApps); // Start with all essential selected
+        this.selectedEssentialApps = new HashSet<>(essentialApps);
         this.excludedPackages = excludedPackages;
         this.originalApps = filterOutExcludedApps(apps);
         this.filteredApps = new ArrayList<>(originalApps);
@@ -70,9 +72,9 @@ public class LockAppAdapter extends RecyclerView.Adapter<LockAppAdapter.AppViewH
             boolean isCheckedB = isChecked(pkgB);
 
             if (isCheckedA && !isCheckedB) {
-                return -1; // A comes first
+                return -1;
             } else if (!isCheckedA && isCheckedB) {
-                return 1; // B comes first
+                return 1;
             } else {
                 String labelA = a.loadLabel(pm).toString();
                 String labelB = b.loadLabel(pm).toString();
@@ -115,11 +117,15 @@ public class LockAppAdapter extends RecyclerView.Adapter<LockAppAdapter.AppViewH
                     selectedRegularApps.remove(pkgName);
                 }
             }
-            sortAppsByCheckedState();
-            notifyDataSetChanged();
-            if (checkedListener != null) {
-                checkedListener.onAppChecked(pkgName, checked);
-            }
+
+            // Add slight delay before sorting and updating
+            handler.postDelayed(() -> {
+                sortAppsByCheckedState();
+                notifyDataSetChanged();
+                if (checkedListener != null) {
+                    checkedListener.onAppChecked(pkgName, checked);
+                }
+            }, 150); // 150ms delay for smoother UX
         });
     }
 
@@ -162,24 +168,16 @@ public class LockAppAdapter extends RecyclerView.Adapter<LockAppAdapter.AppViewH
             appIcon.setImageDrawable(app.loadIcon(pm));
             appName.setText(app.loadLabel(pm));
 
-//            // Visual indication for essential apps (slightly grayed out)
-//            float alpha = isEssential ? 0.8f : 1.0f;
-//            appIcon.setAlpha(alpha);
-//            appName.setAlpha(alpha);
-
             checkBox.setOnCheckedChangeListener(null);
             checkBox.setChecked(isChecked);
-            checkBox.setEnabled(true); // All checkboxes are now enabled
+            checkBox.setEnabled(true);
 
             checkBox.setOnCheckedChangeListener((buttonView, checked) -> {
                 listener.onAppChecked(packageName, checked);
             });
 
-            // AppIcon click should toggle the checkbox
-            appIcon.setOnClickListener(v -> {
-                boolean newChecked = !checkBox.isChecked();
-                checkBox.setChecked(newChecked); // This triggers the above listener
-            });
+            // Make entire item clickable
+            itemView.setOnClickListener(v -> checkBox.setChecked(!checkBox.isChecked()));
         }
     }
 }

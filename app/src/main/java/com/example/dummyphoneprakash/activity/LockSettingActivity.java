@@ -239,4 +239,5 @@ public class LockSettingActivity extends BaseActivity implements CustomTimePicke
         }
 
     }
+
 }

@@ -71,7 +71,7 @@ public abstract class BaseActivity extends AppCompatActivity implements TimeEndD
         startActivity(unlockIntent);
 
         // Close current activity
-        finish();
+
     }
 
     public abstract void onHomeSettingsSelected();
