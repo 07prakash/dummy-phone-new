@@ -39,6 +39,18 @@
         android:lineSpacingExtra="4dp"
         android:layout_marginBottom="24dp"/>
 
+
+    <!-- Welcome Message -->
+    <TextView
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:text=" your distraction-free launcher that helps you stay focused. With Dummy Phone, you can lock yourself into only the apps you allow for a chosen period of time. No exit, no uninstall – just focus."
+        android:textSize="16sp"
+        android:lineSpacingExtra="4dp"
+        android:layout_marginBottom="24dp"/>
+
+
+
     <!-- Links Container -->
     <LinearLayout
         android:layout_width="match_parent"
