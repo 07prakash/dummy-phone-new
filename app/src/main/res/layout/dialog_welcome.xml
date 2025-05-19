@@ -34,6 +34,7 @@
     <TextView
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
+        android:textColor="@color/black"
         android:text="Thank you for choosing Dummy Phone. To continue, please read and accept our terms and conditions."
         android:textSize="16sp"
         android:lineSpacingExtra="4dp"
@@ -44,6 +45,7 @@
     <TextView
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
+        android:textColor="@color/black"
         android:text=" your distraction-free launcher that helps you stay focused. With Dummy Phone, you can lock yourself into only the apps you allow for a chosen period of time. No exit, no uninstall – just focus."
         android:textSize="16sp"
         android:lineSpacingExtra="4dp"
@@ -91,6 +93,7 @@
         android:id="@+id/agreeCheckbox"
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
+        android:textColor="@color/black"
         android:text="I agree to the Privacy Policy and Terms"
         android:textSize="16sp"
         android:layout_marginBottom="24dp"

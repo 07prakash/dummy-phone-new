@@ -102,7 +102,7 @@
         android:id="@+id/choostext"
         android:layout_width="0dp"
         android:layout_height="wrap_content"
-        android:text="Choose App To Use"
+        android:text="Choose App to Use"
         android:textSize="22sp"
         android:textStyle="bold"
         android:textColor="@android:color/white"
