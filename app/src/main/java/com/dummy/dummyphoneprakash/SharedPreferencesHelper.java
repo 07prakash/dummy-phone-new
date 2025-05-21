@@ -12,6 +12,10 @@ public class SharedPreferencesHelper {
     private static final String KEY_ESSENTIAL_APPS = "essential_apps";
     private static final String KEY_IS_LOCKED = "is_locked";
 
+
+    private static final String KEY_TARGET_END_TIME = "target_end_time";
+
+
     // Default essential apps that cannot be blocked
     private static final Set<String> DEFAULT_ESSENTIAL_APPS = new HashSet<String>() {{
         add("com.android.dialer");         // Phone dialer
@@ -115,6 +119,8 @@ public class SharedPreferencesHelper {
 
     private final SharedPreferences prefs;
 
+
+
     public SharedPreferencesHelper(Context context) {
         prefs = PreferenceManager.getDefaultSharedPreferences(context);
         initializeEssentialApps();
@@ -158,5 +164,28 @@ public class SharedPreferencesHelper {
         Set<String> allowed = getAllowedApps();
         Set<String> essential = getEssentialApps();
         return allowed.contains(packageName) || essential.contains(packageName);
+    }
+    // Add these methods to SharedPreferencesHelper
+    public void setTargetEndTime(long targetEndTime) {
+        prefs.edit()
+                .putLong(KEY_TARGET_END_TIME, targetEndTime)
+                .putBoolean(KEY_IS_LOCKED, true)
+                .apply();
+    }
+
+    public long getTargetEndTime() {
+        return prefs.getLong(KEY_TARGET_END_TIME, 0);
+    }
+
+    public void cancelTimer() {
+        prefs.edit()
+                .remove(KEY_TARGET_END_TIME)
+                .putBoolean(KEY_IS_LOCKED, false)
+                .apply();
+    }
+
+    public boolean isTimerActive() {
+        return prefs.getBoolean(KEY_IS_LOCKED, false) &&
+                System.currentTimeMillis() < prefs.getLong(KEY_TARGET_END_TIME, 0);
     }
 }

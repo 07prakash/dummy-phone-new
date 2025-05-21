@@ -76,9 +76,11 @@ public class LockSettingActivity extends BaseActivity implements CustomTimePicke
                         // Save lock state and duration
                         long currentTime = System.currentTimeMillis();
                         long durationMillis = selectedMinutes * 60 * 1000L;
+                        long targetEndTime = currentTime + durationMillis;
 
                         prefs.edit()
                                 .putLong("lock_start_time", currentTime)
+                                .putLong("target_end_time", targetEndTime) // Add this
                                 .putLong("lock_duration", durationMillis)
                                 .putBoolean("is_locked", true)
                                 .apply();

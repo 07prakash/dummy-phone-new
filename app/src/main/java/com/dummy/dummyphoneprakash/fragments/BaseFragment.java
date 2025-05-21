@@ -55,6 +55,7 @@ public class BaseFragment extends Fragment implements TimeEndDialog.TimeEndListe
         if (baseActivity != null) {
             baseActivity.onContinueSelected();
             startActivity(new Intent(requireContext(), UnlockActivity.class));
+            requireActivity().finish();
         }
     }
 
@@ -65,6 +66,7 @@ public class BaseFragment extends Fragment implements TimeEndDialog.TimeEndListe
             Intent unlockIntent = new Intent(requireContext(), UnlockActivity.class);
             unlockIntent.putExtra("EXIT_FLOW", true);
             startActivity(unlockIntent);
+            requireActivity().finish();
         }
     }
 }

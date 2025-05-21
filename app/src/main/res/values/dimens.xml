@@ -1,0 +1,7 @@
+<resources>
+    <dimen name="button_text_size">16sp</dimen>
+    <dimen name="button_radius">24dp</dimen>
+    <dimen name="button_margin">18dp</dimen>
+    <dimen name="fragment_padding">8dp</dimen>
+    <dimen name="heading_text_size">22sp</dimen>
+</resources>

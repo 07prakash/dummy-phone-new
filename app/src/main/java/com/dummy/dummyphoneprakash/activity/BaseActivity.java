@@ -59,13 +59,17 @@ public abstract class BaseActivity extends AppCompatActivity implements TimeEndD
     @Override
     public void onContinueSelected() {
         // Handle continue action
+        clearLockState();
         startActivity(new Intent(this, UnlockActivity.class));
     }
+
+
 
 
     @Override
     public void onExitSelected() {
         // Launch UnlockActivity with a flag to indicate exit
+        clearLockState();
         Intent unlockIntent = new Intent(this, UnlockActivity.class);
         unlockIntent.putExtra("EXIT_FLOW", true);
         startActivity(unlockIntent);
@@ -73,6 +77,16 @@ public abstract class BaseActivity extends AppCompatActivity implements TimeEndD
         // Close current activity
 
     }
+
+    private void clearLockState() {
+        SharedPreferences prefs = PreferenceManager.getDefaultSharedPreferences(this);
+        prefs.edit()
+                .remove("lock_start_time")
+                .remove("lock_duration")
+                .putBoolean("is_locked", false)
+                .apply();
+    }
+
 
     public abstract void onHomeSettingsSelected();
 }

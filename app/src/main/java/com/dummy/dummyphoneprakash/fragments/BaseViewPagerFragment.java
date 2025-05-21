@@ -57,6 +57,7 @@ public abstract class BaseViewPagerFragment extends Fragment implements TimeEndD
             startActivity(new Intent(requireContext(), UnlockActivity.class));
         } else {
             startActivity(new Intent(requireContext(), UnlockActivity.class));
+            requireActivity().finish();
         }
     }
 
@@ -70,10 +71,13 @@ public abstract class BaseViewPagerFragment extends Fragment implements TimeEndD
 
             unlockIntent.putExtra("EXIT_FLOW", true);
             startActivity(unlockIntent);
+            requireActivity().finish();
 
 
             // Close current activity
 //            baseActivity.finish();
         }
+
+
     }
 }
