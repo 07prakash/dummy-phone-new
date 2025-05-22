@@ -1,23 +1,17 @@
 <resources>
-    <!-- General padding -->
     <dimen name="padding_screen">8dp</dimen>
-    <dimen name="margin_d">10dp</dimen>
 
-    <!-- Margins -->
     <dimen name="padding_large">16dp</dimen>
     <dimen name="margin_large">24dp</dimen>
     <dimen name="margin_medium">18dp</dimen>
     <dimen name="margin_small">4dp</dimen>
 
-    <!-- Text sizes -->
     <dimen name="text_xlarge">20sp</dimen>
     <dimen name="text_large">18sp</dimen>
     <dimen name="text_medium">16sp</dimen>
 
-    <!-- Corner radius -->
     <dimen name="corner_radius">20dp</dimen>
 
-    <!-- Button sizes -->
     <dimen name="btn_exit_width">120dp</dimen>
     <dimen name="btn_lock_width">130dp</dimen>
     <dimen name="btn_unlock_width">176dp</dimen>

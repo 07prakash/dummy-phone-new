@@ -17,7 +17,7 @@ import androidx.appcompat.app.AppCompatActivity;
 import com.dummy.dummyphoneprakash.R;
 import com.dummy.dummyphoneprakash.SharedPreferencesHelper;
 
-public class UnlockActivity extends AppCompatActivity {
+public class UnlockActivity extends BaseActivity {
 
     private static final String TAG = "UnlockActivity";
 
@@ -157,13 +157,18 @@ public class UnlockActivity extends AppCompatActivity {
         unlockDevice();
     }
 
-    private void showTimeEndDialog() {
+    public void showTimeEndDialog() {
         new AlertDialog.Builder(this)
                 .setTitle("Timer Completed")
                 .setMessage("The lock duration has ended. Your device will now be unlocked.")
                 .setPositiveButton("OK", (dialog, which) -> {})
                 .setCancelable(false)
                 .show();
+    }
+
+    @Override
+    public void onHomeSettingsSelected() {
+
     }
 
     private void unlockDevice() {
