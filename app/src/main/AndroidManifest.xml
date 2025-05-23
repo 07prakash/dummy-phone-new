@@ -68,12 +68,15 @@
             </intent-filter>
         </service>
 
-        <receiver android:name=".BootReceiver"
+        <receiver
+            android:name=".BootReceiver"
             android:enabled="true"
-            android:exported="true">
-            <intent-filter android:priority="1000">
+            android:exported="true"
+            android:directBootAware="true"> <!-- For faster execution on Android 7.0+ -->
+            <intent-filter android:priority="999"> <!-- High but not maximum priority -->
                 <action android:name="android.intent.action.BOOT_COMPLETED" />
                 <action android:name="android.intent.action.QUICKBOOT_POWERON" />
+                <action android:name="android.intent.action.LOCKED_BOOT_COMPLETED" /> <!-- For direct boot -->
                 <category android:name="android.intent.category.DEFAULT" />
             </intent-filter>
         </receiver>
