@@ -91,7 +91,7 @@ public class HomeFragment extends BaseFragment {
 
     private void disableNotificationBlocking() {
         SharedPreferencesHelper prefsHelper = new SharedPreferencesHelper(requireContext());
-        prefsHelper.setBlockingActive(false);
+        prefsHelper.setBlockingActive(true);
 
         Toast.makeText(requireContext(), "Notification blocking disabled", Toast.LENGTH_SHORT).show();
     }
