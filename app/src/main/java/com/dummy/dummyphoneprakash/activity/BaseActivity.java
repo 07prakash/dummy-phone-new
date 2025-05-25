@@ -9,6 +9,7 @@ import androidx.appcompat.app.AppCompatActivity;
 import androidx.core.content.ContextCompat;
 import androidx.preference.PreferenceManager;
 
+import android.provider.Settings;
 import android.view.Window;
 
 import androidx.fragment.app.Fragment;
@@ -62,7 +63,7 @@ public abstract class BaseActivity extends AppCompatActivity implements TimeEndD
     public void onContinueSelected() {
         // Handle continue action
         clearLockState();
-        startActivity(new Intent(this, UnlockActivity.class));
+        startActivity(new Intent(this,LockSettingActivity.class));
     }
 
 
@@ -72,11 +73,12 @@ public abstract class BaseActivity extends AppCompatActivity implements TimeEndD
     public void onExitSelected() {
         // Launch UnlockActivity with a flag to indicate exit
         clearLockState();
-        Intent unlockIntent = new Intent(this, UnlockActivity.class);
-        unlockIntent.putExtra("EXIT_FLOW", true);
-        startActivity(unlockIntent);
+        Intent homeSettingsIntent = new Intent(Settings.ACTION_HOME_SETTINGS);
+        startActivity(homeSettingsIntent);
+//        Intent unlockIntent = new Intent(this, UnlockActivity.class);
+//        unlockIntent.putExtra("EXIT_FLOW", true);
+//        startActivity(unlockIntent);
 
-        // Close current activity
 
     }
 

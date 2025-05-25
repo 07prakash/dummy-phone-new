@@ -3,6 +3,7 @@ package com.dummy.dummyphoneprakash.fragments;
 import android.content.Context;
 import android.content.Intent;
 import android.content.SharedPreferences;
+import android.provider.Settings;
 
 import androidx.annotation.NonNull;
 import androidx.fragment.app.Fragment;
@@ -10,6 +11,7 @@ import androidx.preference.PreferenceManager;
 
 import com.dummy.dummyphoneprakash.activity.BaseActivity;
 import com.dummy.dummyphoneprakash.FrgmentDialog.TimeEndDialog;
+import com.dummy.dummyphoneprakash.activity.LockSettingActivity;
 import com.dummy.dummyphoneprakash.activity.UnlockActivity;
 
 public abstract class BaseViewPagerFragment extends Fragment implements TimeEndDialog.TimeEndListener {
@@ -54,9 +56,11 @@ public abstract class BaseViewPagerFragment extends Fragment implements TimeEndD
     public void onContinueSelected() {
         if (baseActivity != null) {
             baseActivity.onContinueSelected();
-            startActivity(new Intent(requireContext(), UnlockActivity.class));
+            clearLockState();
+            startActivity(new Intent(requireContext(), LockSettingActivity.class));
         } else {
-            startActivity(new Intent(requireContext(), UnlockActivity.class));
+            clearLockState();
+            startActivity(new Intent(requireContext(),LockSettingActivity.class));
             requireActivity().finish();
         }
     }
@@ -65,19 +69,27 @@ public abstract class BaseViewPagerFragment extends Fragment implements TimeEndD
     public void onExitSelected() {
         if (baseActivity != null) {
             baseActivity.onExitSelected();
-            startActivity(new Intent(requireContext(), UnlockActivity.class));
+           clearLockState();
+            Intent homeSettingsIntent = new Intent(Settings.ACTION_HOME_SETTINGS);
+            startActivity(homeSettingsIntent);
         } else {
-            Intent unlockIntent = new Intent(getContext(), UnlockActivity.class);
+            clearLockState();
+            Intent homeSettingsIntent = new Intent(Settings.ACTION_HOME_SETTINGS);
+            startActivity(homeSettingsIntent);
 
-            unlockIntent.putExtra("EXIT_FLOW", true);
-            startActivity(unlockIntent);
-            requireActivity().finish();
-
-
-            // Close current activity
-//            baseActivity.finish();
         }
 
-
+    }
+    private void clearLockState() {
+        // Get the Activity context safely
+        Context context = getActivity();
+        if (context != null) {
+            SharedPreferences prefs = PreferenceManager.getDefaultSharedPreferences(context);
+            prefs.edit()
+                    .remove("lock_start_time")
+                    .remove("lock_duration")
+                    .putBoolean("is_locked", false)
+                    .apply();
+        }
     }
 }

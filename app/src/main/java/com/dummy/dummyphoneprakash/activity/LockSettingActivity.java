@@ -110,6 +110,7 @@ public class LockSettingActivity extends BaseActivity implements CustomTimePicke
             // Open home settings to change launcher
             Intent homeSettingsIntent = new Intent(Settings.ACTION_HOME_SETTINGS);
             startActivity(homeSettingsIntent);
+            clearLockState();
         });
 
         // Update UI based on current state
@@ -208,7 +209,14 @@ public class LockSettingActivity extends BaseActivity implements CustomTimePicke
             updateTimerDisplay();
         }
     }
-
+    private void clearLockState() {
+        SharedPreferences prefs = PreferenceManager.getDefaultSharedPreferences(this);
+        prefs.edit()
+                .remove("lock_start_time")
+                .remove("lock_duration")
+                .putBoolean("is_locked", false)
+                .apply();
+    }
     private void updateTimerDisplay() {
         // Convert minutes to milliseconds for calculation
         long totalMillis = selectedMinutes * 60 * 1000L;

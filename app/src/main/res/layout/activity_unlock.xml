@@ -39,15 +39,15 @@
             android:backgroundTint="#0000"
             android:text="Unlock Early"
             android:textColor="@color/white"
-            app:layout_constraintBottom_toTopOf="@+id/exitBtn"
+            app:layout_constraintBottom_toTopOf="@+id/exitOut"
             app:layout_constraintEnd_toEndOf="parent"
             app:layout_constraintHorizontal_bias="0.0"
             app:layout_constraintStart_toStartOf="parent"
             app:layout_constraintTop_toTopOf="parent"
-            app:layout_constraintVertical_bias="0.958" />
+            app:layout_constraintVertical_bias="0.953" />
 
         <Button
-            android:id="@+id/exitBtn"
+            android:id="@+id/exitOut"
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
             android:layout_alignParentBottom="true"

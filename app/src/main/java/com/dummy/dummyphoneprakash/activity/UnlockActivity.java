@@ -24,7 +24,7 @@ public class UnlockActivity extends BaseActivity {
     // UI Components
     private TextView countdownText;
     private Button earlyAccessBtn;
-    private Button exitBtn;
+    private Button exitOut;
 
     // Timer
     private CountDownTimer countDownTimer;
@@ -42,13 +42,13 @@ public class UnlockActivity extends BaseActivity {
         prefsHelper = new SharedPreferencesHelper(this);
         countdownText = findViewById(R.id.countdownText);
         earlyAccessBtn = findViewById(R.id.earlyAccessBtn);
-        exitBtn = findViewById(R.id.exitBtn);
+        exitOut = findViewById(R.id.exitOut);
 
         // Handle exit flow (when coming from settings)
-        if (getIntent().getBooleanExtra("EXIT_FLOW", false)) {
-            handleExitFlow();
-            return;
-        }
+//        if (getIntent().getBooleanExtra("EXIT_FLOW", false)) {
+//            handleExitFlow();
+//            return;
+//        }
 
         // Setup UI
         setupButtons();
@@ -57,26 +57,25 @@ public class UnlockActivity extends BaseActivity {
         startPersistentTimer();
     }
 
-    private void handleExitFlow() {
-        new Handler(Looper.getMainLooper()).postDelayed(() -> {
-            try {
-                Intent homeSettingsIntent = new Intent(Settings.ACTION_HOME_SETTINGS);
-                homeSettingsIntent.addFlags(Intent.FLAG_ACTIVITY_NEW_TASK);
-                startActivity(homeSettingsIntent);
-                finish();
-            } catch (Exception e) {
-                Toast.makeText(this, "Error opening settings", Toast.LENGTH_SHORT).show();
-                finish();
-            }
-        }, 100);
-    }
+//    private void handleExitFlow() {
+//        new Handler(Looper.getMainLooper()).postDelayed(() -> {
+//            try {
+//                Intent homeSettingsIntent = new Intent(Settings.ACTION_HOME_SETTINGS);
+//                homeSettingsIntent.addFlags(Intent.FLAG_ACTIVITY_NEW_TASK);
+//                startActivity(homeSettingsIntent);
+//                finish();
+//            } catch (Exception e) {
+//                Toast.makeText(this, "Error opening settings", Toast.LENGTH_SHORT).show();
+//                finish();
+//            }
+//        }, 100);
+//    }
 
     private void setupButtons() {
         earlyAccessBtn.setOnClickListener(v -> showEarlyUnlockConfirmation());
 
-        exitBtn.setOnClickListener(v -> {
-            Intent intent = new Intent(this, UnlockActivity.class);
-            intent.putExtra("EXIT_FLOW", true);
+        exitOut.setOnClickListener(v -> {
+            Intent intent = new Intent(this, MainPagerActivity.class);
             startActivity(intent);
             finish();
         });
