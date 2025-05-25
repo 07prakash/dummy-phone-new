@@ -18,6 +18,7 @@
         android:id="@+id/appName"
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
+        android:textColor="@color/surface"
         android:layout_marginTop="4dp"
         android:textSize="12sp"
      android:singleLine="true"
