@@ -9,6 +9,7 @@ import android.content.Intent;
 import android.content.IntentFilter;
 import android.content.pm.PackageManager;
 import android.os.Bundle;
+import android.provider.Settings;
 
 import androidx.viewpager2.widget.ViewPager2;
 
@@ -27,8 +28,16 @@ public class MainPagerActivity extends BaseActivity {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_main_pager);
 
-        if (WelcomeDialogFragment.shouldShow(this)) {
-            new WelcomeDialogFragment().show(getSupportFragmentManager(), "welcome_dialog");
+
+
+        if (isTaskRoot()) {
+            // This is being launched as the home activity
+            Intent intent = new Intent(this, LockSettingActivity.class);
+            startActivity(intent);
+
+        } else {
+            // Handle cases where it's not launched as home (e.g., from recent apps)
+            setContentView(R.layout.activity_main_pager);
         }
 
 //        Intent intent = new Intent(Settings.ACTION_USAGE_ACCESS_SETTINGS);
@@ -65,6 +74,12 @@ public class MainPagerActivity extends BaseActivity {
         super.onResume();
         if (isMyLauncherDefault()) {
             viewPager.setCurrentItem(0); // Ensure HomeFragment is visible
+        }
+
+        if (!isMyLauncherDefault()) {
+            // Only open launcher selection if not default launcher
+            Intent homeSettingsIntent = new Intent(Settings.ACTION_HOME_SETTINGS);
+            startActivity(homeSettingsIntent);
         }
     }
 

@@ -17,7 +17,7 @@ public class BootReceiver extends BroadcastReceiver {
 
             // Direct execution (already on main thread)
             SharedPreferencesHelper prefsHelper = new SharedPreferencesHelper(context);
-            disableNotificationBlocking(context);
+//            disableNotificationBlocking(context);
 
             if (prefsHelper.isTimerActive()) {
                 Log.d(TAG, "Restoring timer after reboot");

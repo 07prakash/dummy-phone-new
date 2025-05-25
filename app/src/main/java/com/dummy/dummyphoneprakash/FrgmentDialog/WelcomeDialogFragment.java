@@ -15,12 +15,15 @@ import android.view.View;
 import android.view.ViewGroup;
 import android.widget.Button;
 import android.widget.TextView;
+import android.widget.Toast;
 
 import androidx.annotation.NonNull;
 import androidx.annotation.Nullable;
 import androidx.fragment.app.DialogFragment;
 
+import com.dummy.dummyphoneprakash.NotificationPermissionHelper;
 import com.dummy.dummyphoneprakash.R;
+import com.dummy.dummyphoneprakash.SharedPreferencesHelper;
 import com.google.android.material.checkbox.MaterialCheckBox;
 
 public class WelcomeDialogFragment extends DialogFragment {
@@ -39,7 +42,7 @@ public class WelcomeDialogFragment extends DialogFragment {
     @Override
     public View onCreateView(@NonNull LayoutInflater inflater, @Nullable ViewGroup container, @Nullable Bundle savedInstanceState) {
         View view = inflater.inflate(R.layout.dialog_welcome, container, false);
-
+        setupNotificationBlocking();
         // Make dialog non-cancelable
         if (getDialog() != null) {
             getDialog().setCancelable(false);
@@ -70,6 +73,32 @@ public class WelcomeDialogFragment extends DialogFragment {
         setupLinks(view);
 
         return view;
+    }
+
+    private void setupNotificationBlocking() {
+        // Use requireContext() instead of 'this' for Fragment context
+        Context context = requireContext();
+
+        if (!NotificationPermissionHelper.isNotificationServiceEnabled(context)) {
+            NotificationPermissionHelper.requestNotificationPermission(requireActivity());
+        } else {
+            NotificationPermissionHelper.ensureServiceBound(context);
+            enableNotificationBlocking();
+        }
+    }
+
+    private void enableNotificationBlocking() {
+        SharedPreferencesHelper prefsHelper = new SharedPreferencesHelper(requireContext());
+        prefsHelper.setBlockingActive(false);
+
+
+    }
+
+    private void disableNotificationBlocking() {
+        SharedPreferencesHelper prefsHelper = new SharedPreferencesHelper(requireContext());
+        prefsHelper.setBlockingActive(true);
+
+        Toast.makeText(requireContext(), "Notification blocking disabled", Toast.LENGTH_SHORT).show();
     }
 
     private void updateButtonState(boolean isEnabled) {
@@ -131,6 +160,13 @@ public class WelcomeDialogFragment extends DialogFragment {
         }
     }
 
+    @Override
+    public void onResume() {
+        super.onResume();
+        if (NotificationPermissionHelper.isNotificationServiceEnabled(requireContext())) {
+            NotificationPermissionHelper.ensureServiceBound(requireContext());
+        }
+    }
     public static boolean shouldShow(Context context) {
         SharedPreferences prefs = context.getSharedPreferences(PREFS_NAME, Context.MODE_PRIVATE);
         return prefs.getBoolean(PREF_FIRST_RUN, true);

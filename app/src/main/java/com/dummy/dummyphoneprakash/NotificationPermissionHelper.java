@@ -4,6 +4,7 @@ import android.app.Activity;
 import android.app.AlertDialog;
 import android.content.ComponentName;
 import android.content.Context;
+import android.content.DialogInterface;
 import android.content.Intent;
 import android.os.Build;
 import android.provider.Settings;
@@ -27,14 +28,22 @@ public class NotificationPermissionHelper {
     }
 
     private static void showPermissionExplanation(Activity activity) {
-        new AlertDialog.Builder(activity)
+        AlertDialog dialog = new AlertDialog.Builder(activity)
                 .setTitle("Notification Access Required")
-                .setMessage("To block notifications from unchecked apps, please enable notification access for this app.")
-                .setPositiveButton("Enable", (dialog, which) -> {
+                .setMessage("To use this app, you must enable notification access. The app cannot function without this permission.")
+                .setPositiveButton("Enable", (d, which) -> {
                     openNotificationSettings(activity);
                 })
-                .setNegativeButton("Later", null)
-                .show();
+                .setCancelable(false) // This prevents dismissal by tapping outside or back button
+                .create();
+
+        // If you want to prevent closing even with the negative button,
+        // remove the negative button entirely or handle it differently
+        dialog.setButton(DialogInterface.BUTTON_NEGATIVE, "Exit App", (d, which) -> {
+            activity.finish();
+        });
+
+        dialog.show();
     }
 
     private static void openNotificationSettings(Activity activity) {

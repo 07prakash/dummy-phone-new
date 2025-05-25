@@ -19,6 +19,7 @@ import androidx.fragment.app.FragmentContainerView;
 import androidx.preference.PreferenceManager;
 
 import com.dummy.dummyphoneprakash.FrgmentDialog.CustomTimePickerFragment;
+import com.dummy.dummyphoneprakash.FrgmentDialog.WelcomeDialogFragment;
 import com.dummy.dummyphoneprakash.R;
 import com.dummy.dummyphoneprakash.activity.BaseActivity;
 
@@ -59,7 +60,9 @@ public class LockSettingActivity extends BaseActivity implements CustomTimePicke
         exitBtn = findViewById(R.id.exitBtn);
         fragmentContainerView = findViewById(R.id.fragmentContainerView);
 
-
+        if (WelcomeDialogFragment.shouldShow(this)) {
+            new WelcomeDialogFragment().show(getSupportFragmentManager(), "welcome_dialog");
+        }
 
         timePickerBtn.setOnClickListener(v -> {
             CustomTimePickerFragment timePickerFragment = new CustomTimePickerFragment();
