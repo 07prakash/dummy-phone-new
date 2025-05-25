@@ -7,12 +7,12 @@
     android:orientation="vertical"
     android:id="@+id/cardView"
     android:gravity="center"
-    android:padding="10dp">
+    android:padding="@dimen/padding_screen">
 
     <ImageView
         android:id="@+id/appIcon"
-        android:layout_width="53dp"
-        android:layout_height="53dp"
+        android:layout_width="@dimen/logo_size"
+        android:layout_height="@dimen/logo_size"
         android:layout_marginTop="4dp"
         app:layout_constraintBottom_toBottomOf="parent"
         app:layout_constraintEnd_toEndOf="parent"

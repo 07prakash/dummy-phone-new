@@ -1,0 +1,22 @@
+<resources>
+    <!-- Max padding/margins for tablets -->
+    <dimen name="padding_screen">16dp</dimen>
+    <dimen name="padding_large">24dp</dimen>
+
+    <dimen name="margin_large">32dp</dimen>
+    <dimen name="margin_medium">24dp</dimen>
+    <dimen name="margin_small">12dp</dimen>
+    <dimen name="margin_xsmall">8dp</dimen>
+    <dimen name="margin_xxxlarge">110dp</dimen>
+
+    <!-- Largest text (tablet-friendly) -->
+    <dimen name="text_xlarge">30sp</dimen>
+    <dimen name="text_large">22sp</dimen>
+    <dimen name="text_medium">20sp</dimen>
+    <dimen name="text_small">18sp</dimen>
+    <dimen name="text_xsmall">16sp</dimen>
+
+    <!-- Extra-wide buttons -->
+    <dimen name="btn_width">220dp</dimen>
+    <dimen name="btn_height">68dp</dimen>
+</resources>

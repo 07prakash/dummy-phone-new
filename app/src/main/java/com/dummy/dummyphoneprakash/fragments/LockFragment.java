@@ -18,7 +18,9 @@ import com.dummy.dummyphoneprakash.R;
 import com.dummy.dummyphoneprakash.adapter.LockAppAdapter;
 import com.dummy.dummyphoneprakash.SharedPreferencesHelper;
 import java.util.Arrays;
+import java.util.HashMap;
 import java.util.HashSet;
+import java.util.Map;
 import java.util.Set;
 
 public class LockFragment extends BaseFragment {
@@ -68,10 +70,29 @@ public class LockFragment extends BaseFragment {
             Set<String> selectedEssential = adapter.getSelectedEssentialApps();
             prefsHelper.saveAllowedApps(selectedApps, selectedEssential);
 
-            String message = isChecked ? "Added to allowed apps" : "Removed from allowed apps";
-            Toast.makeText(requireContext(), message, Toast.LENGTH_SHORT).show();
-        });
+            // Map of package names to app names
+            Map<String, String> socialApps = new HashMap<>();
+            socialApps.put("com.facebook.katana", "Facebook");
+            socialApps.put("com.snapchat.android", "Snapchat");
+            socialApps.put("com.twitter.android", "Twitter");
+            socialApps.put("com.instagram.android", "Instagram");
+            socialApps.put("com.google.android.youtube", "YouTube");
+            socialApps.put("com.zhiliaoapp.musically", "TikTok");
+            socialApps.put("com.google.android.googlequicksearchbox", "Google");
+            socialApps.put("com.reddit.frontpage", "Reddit");
+            socialApps.put("com.linkedin.android", "LinkedIn");
 
+            if (socialApps.containsKey(packageName)) {
+                String appName = socialApps.get(packageName);
+                String message = isChecked
+                        ? "Think carefully - adding " + appName + " can be time consuming"
+                        : "Good choice - removing " + appName + " will help you focus";
+                Toast.makeText(requireContext(), message, Toast.LENGTH_LONG).show();
+            } else {
+                String message = isChecked ? "Added to allowed apps" : "Removed from allowed apps";
+                Toast.makeText(requireContext(), message, Toast.LENGTH_SHORT).show();
+            }
+        });
         recyclerView.setLayoutManager(new GridLayoutManager(requireContext(), 4));
         recyclerView.setAdapter(adapter);
     }

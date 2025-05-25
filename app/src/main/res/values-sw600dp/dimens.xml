@@ -1,0 +1,22 @@
+<resources>
+    <!-- Increased spacing for larger screens -->
+    <dimen name="padding_screen">12dp</dimen>
+    <dimen name="padding_large">20dp</dimen>
+
+    <dimen name="margin_large">24dp</dimen>
+    <dimen name="margin_medium">18dp</dimen>
+    <dimen name="margin_small">10dp</dimen>
+    <dimen name="margin_xsmall">6dp</dimen>
+    <dimen name="margin_xxxlarge">80dp</dimen>
+
+    <!-- Larger text for readability -->
+    <dimen name="text_xlarge">26sp</dimen>
+    <dimen name="text_large">20sp</dimen>
+    <dimen name="text_medium">18sp</dimen>
+    <dimen name="text_small">16sp</dimen>
+    <dimen name="text_xsmall">14sp</dimen>
+
+    <!-- Wider buttons -->
+    <dimen name="btn_width">190dp</dimen>
+    <dimen name="btn_height">62dp</dimen>
+</resources>

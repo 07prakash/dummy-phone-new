@@ -1,25 +1,37 @@
 <resources>
-    <!-- General padding -->
+    <!-- Screen Padding (Scales with screen size) -->
     <dimen name="padding_screen">8dp</dimen>
-    <dimen name="margin_d">10dp</dimen>
-
-    <!-- Margins -->
     <dimen name="padding_large">16dp</dimen>
-    <dimen name="margin_large">24dp</dimen>
-    <dimen name="margin_medium">18dp</dimen>
-    <dimen name="margin_small">4dp</dimen>
 
-    <!-- Text sizes -->
-    <dimen name="text_xlarge">20sp</dimen>
+    <!-- Margins (Responsive) -->
+    <dimen name="margin_large">24dp</dimen>
+    <dimen name="margin_medium">16dp</dimen>
+    <dimen name="margin_small">8dp</dimen>
+    <dimen name="margin_xsmall">4dp</dimen>
+    <dimen name="margin_xxxlarge">60dp</dimen>
+
+    <!-- Text Sizes (Uses 'sp' for accessibility) -->
+    <dimen name="text_xlarge">24sp</dimen>
     <dimen name="text_large">18sp</dimen>
     <dimen name="text_medium">16sp</dimen>
+    <dimen name="text_small">14sp</dimen>
+    <dimen name="text_xsmall">12sp</dimen>
 
-    <!-- Corner radius -->
-    <dimen name="corner_radius">20dp</dimen>
+    <!-- Corner Radius (Consistent curves) -->
+    <dimen name="corner_radius_small">8dp</dimen>
+    <dimen name="corner_radius">16dp</dimen>
+    <dimen name="corner_radius_large">24dp</dimen>
 
-    <!-- Button sizes -->
-    <dimen name="btn_exit_width">120dp</dimen>
-    <dimen name="btn_lock_width">130dp</dimen>
-    <dimen name="btn_unlock_width">176dp</dimen>
-    <dimen name="btn_unlock_height">42dp</dimen>
+    <!-- Button Sizes (Fixed but flexible) -->
+    <dimen name="btn_width">160dp</dimen>
+    <dimen name="btn_height">58dp</dimen>
+    <dimen name="btn_padding">12dp</dimen>
+
+    <dimen name="logo_size">54dp</dimen>
+    <dimen name="CheckBox_size">23dp</dimen>
+
+    <!-- Elevation (Shadows) -->
+    <dimen name="elevation_low">2dp</dimen>
+    <dimen name="elevation_medium">4dp</dimen>
+    <dimen name="elevation_high">6dp</dimen>
 </resources>
