@@ -22,6 +22,7 @@
     <dimen name="btn_height">54dp</dimen>
 
     <dimen name="logo_size">57dp</dimen>
+    <dimen name="logo_size_m">55dp</dimen>
     <dimen name="CheckBox_size">24dp</dimen>
 
 </resources>

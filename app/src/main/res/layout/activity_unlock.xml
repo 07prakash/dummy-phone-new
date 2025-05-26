@@ -35,7 +35,7 @@
             android:id="@+id/earlyAccessBtn"
             android:layout_width="0dp"
             android:layout_height="wrap_content"
-            android:layout_above="@+id/exitBtn"
+            android:layout_above="@+id/exitOut"
             android:backgroundTint="#0000"
             android:text="Unlock Early"
             android:textColor="@color/white"

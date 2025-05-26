@@ -28,15 +28,15 @@
         android:maxWidth="80dp"
         android:maxLines="2"
         android:singleLine="true"
-        android:textSize="12sp"
+        android:textSize="@dimen/text_small"
         app:layout_constraintEnd_toEndOf="@+id/appIcon"
         app:layout_constraintStart_toStartOf="@+id/appIcon"
         app:layout_constraintTop_toBottomOf="@+id/appIcon" />
 
     <CheckBox
         android:id="@+id/appCheckBox"
-        android:layout_width="23dp"
-        android:layout_height="23dp"
+        android:layout_width="@dimen/CheckBox_size"
+        android:layout_height="@dimen/CheckBox_size"
         android:layout_marginStart="-7dp"
         android:layout_marginBottom="10dp"
         android:background="@drawable/checkbox_selector"

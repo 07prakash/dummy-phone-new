@@ -1,0 +1,32 @@
+<resources>
+    <!-- Smaller padding/margins for compact screens -->
+    <dimen name="padding_screen">5dp</dimen>
+    <dimen name="padding_large">12dp</dimen>
+
+    <dimen name="margin_large">24dp</dimen>
+
+    <dimen name="margin_medium">12dp</dimen>
+    <dimen name="margin_small">6dp</dimen>
+    <dimen name="margin_xsmall">3dp</dimen>
+    <dimen name="margin_xxxlarge">64dp</dimen>
+
+    <!-- Slightly smaller text -->
+    <dimen name="text_xlarge">25sp</dimen>
+    <dimen name="text_large">21sp</dimen>
+
+    <dimen name="text_medium">16sp</dimen>
+    <dimen name="text_small">14sp</dimen>
+    <dimen name="text_xsmall">10sp</dimen>
+
+    <!-- Compact buttons -->
+    <dimen name="btn_width">164dp</dimen>
+    <dimen name="btn_height">62dp</dimen>
+
+    <dimen name="corner_radius">24dp</dimen>
+    <dimen name="corner_radius_large">28dp</dimen>
+
+    <dimen name="logo_size">72dp</dimen>
+    <dimen name="logo_size_m">68dp</dimen>
+    <dimen name="CheckBox_size">25dp</dimen>
+
+</resources>

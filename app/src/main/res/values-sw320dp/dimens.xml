@@ -1,6 +1,6 @@
 <resources>
     <!-- Smaller padding/margins for compact screens -->
-    <dimen name="padding_screen">6dp</dimen>
+    <dimen name="padding_screen">5dp</dimen>
     <dimen name="padding_large">12dp</dimen>
 
     <dimen name="margin_large">16dp</dimen>
@@ -12,7 +12,7 @@
     <!-- Slightly smaller text -->
     <dimen name="text_xlarge">20sp</dimen>
     <dimen name="text_large">16sp</dimen>
-    <dimen name="text_medium">14sp</dimen>
+    <dimen name="text_medium">12sp</dimen>
     <dimen name="text_small">12sp</dimen>
     <dimen name="text_xsmall">10sp</dimen>
 
@@ -20,8 +20,9 @@
     <dimen name="btn_width">126dp</dimen>
     <dimen name="btn_height">46dp</dimen>
 
-    <dimen name="logo_size">50dp</dimen>
+    <dimen name="logo_size">52dp</dimen>
+    <dimen name="logo_size_m">50dp</dimen>
 
-    <dimen name="CheckBox_size">18dp</dimen>
+    <dimen name="CheckBox_size">20dp</dimen>
 
 </resources>
