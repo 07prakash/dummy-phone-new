@@ -1,6 +1,6 @@
 <?xml version="1.0" encoding="utf-8"?>
 <LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
-    android:layout_width="96dp"
+    android:layout_width="wrap_content"
     android:layout_height="wrap_content"
     android:orientation="vertical"
     android:gravity="center_horizontal"
@@ -11,7 +11,7 @@
         android:layout_marginTop="3dp"
         android:layout_width="@dimen/logo_size_m"
         android:layout_height="@dimen/logo_size_m"
-        android:scaleType="centerInside"
+
          />
 
     <TextView

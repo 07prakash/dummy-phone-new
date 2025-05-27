@@ -1,5 +1,5 @@
 [versions]
-agp = "8.9.2"
+agp = "8.10.0"
 appcompatVersion = "1.6.1"
 billing = "7.1.1"
 billingVersion = "6.0.1"

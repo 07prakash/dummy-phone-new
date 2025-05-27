@@ -6,14 +6,18 @@
     <dimen name="margin_large">26dp</dimen>
     <dimen name="margin_medium">20dp</dimen>
     <dimen name="margin_small">8dp</dimen>
-    <dimen name="margin_xsmall">4dp</dimen>
+    <dimen name="margin_xsmall">9dp</dimen>
     <dimen name="margin_xxxlarge">60dp</dimen>
 
     <!-- Balanced text sizes -->
     <dimen name="text_xlarge">30sp</dimen>
-    <dimen name="text_large">24sp</dimen>
-    <dimen name="text_medium">18sp</dimen>
+    <dimen name="button_text_size">24sp</dimen>
+    <dimen name="text_medium">22sp</dimen>
     <dimen name="text_small">17sp</dimen>
+
+
+    <dimen name="timeText">90sp</dimen>
+    <dimen name="dateTextView">30sp</dimen>
 
     <dimen name="text_xsmall">12sp</dimen>
 
@@ -28,5 +32,7 @@
     <dimen name="logo_size_m">79dp</dimen>
 
     <dimen name="CheckBox_size">30dp</dimen>
+
+
 
 </resources>

@@ -11,7 +11,7 @@
         android:layout_centerHorizontal="true"
         android:layout_above="@+id/dateTextView"
         android:textColor="@android:color/white"
-        android:textSize="72sp"
+        android:textSize="@dimen/timeText"
         android:textStyle="bold"/>
 
     <TextView
@@ -20,7 +20,7 @@
         android:layout_height="wrap_content"
         android:layout_centerInParent="true"
         android:textColor="@android:color/white"
-        android:textSize="24sp"/>
+        android:textSize="@dimen/dateTextView"/>
 
     <Button
         android:id="@+id/lockSettingsButton"

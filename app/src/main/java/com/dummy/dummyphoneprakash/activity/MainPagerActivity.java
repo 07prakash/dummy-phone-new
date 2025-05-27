@@ -54,12 +54,15 @@ public class MainPagerActivity extends BaseActivity {
 
     @Override
     public void onBackPressed() {
-        int currentItem = viewPager.getCurrentItem();  // Get current page index
+        int currentItem = viewPager.getCurrentItem();
 
-        if (currentItem == 0) {
+        if (currentItem == 1) {
+            // If on page 1, go back to page 0
+            viewPager.setCurrentItem(0, true); // true for smooth scroll animation
+        } else if (currentItem == 0) {
+     // back press is disabled on the first page
 
         } else {
-            // Allow normal back press
             super.onBackPressed();
         }
     }

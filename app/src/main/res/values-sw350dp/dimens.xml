@@ -12,7 +12,7 @@
     <!-- Slightly smaller text -->
     <dimen name="text_xlarge">23sp</dimen>
 
-    <dimen name="text_large">18sp</dimen>
+    <dimen name="button_text_size">18sp</dimen>
     <dimen name="text_medium">14sp</dimen>
     <dimen name="text_small">12sp</dimen>
     <dimen name="text_xsmall">10sp</dimen>
@@ -20,6 +20,11 @@
     <!-- Compact buttons -->
     <dimen name="btn_width">140dp</dimen>
     <dimen name="btn_height">54dp</dimen>
+
+    <!-- Corner Radius (Consistent curves) -->
+    <dimen name="corner_radius_small">8dp</dimen>
+    <dimen name="corner_radius">20dp</dimen>
+    <dimen name="corner_radius_large">24dp</dimen>
 
     <dimen name="logo_size">57dp</dimen>
     <dimen name="logo_size_m">55dp</dimen>

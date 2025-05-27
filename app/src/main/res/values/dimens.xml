@@ -12,10 +12,17 @@
 
     <!-- Text Sizes (Uses 'sp' for accessibility) -->
     <dimen name="text_xlarge">24sp</dimen>
-    <dimen name="text_large">18sp</dimen>
+    <dimen name="button_text_size">18sp</dimen>
     <dimen name="text_medium">16sp</dimen>
     <dimen name="text_small">14sp</dimen>
     <dimen name="text_xsmall">12sp</dimen>
+
+    <dimen name="timeText">72sp</dimen>
+    <dimen name="dateTextView">24sp</dimen>
+
+
+
+
 
     <!-- Corner Radius (Consistent curves) -->
     <dimen name="corner_radius_small">8dp</dimen>

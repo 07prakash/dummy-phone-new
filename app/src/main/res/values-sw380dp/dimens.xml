@@ -7,16 +7,20 @@
 
     <dimen name="margin_medium">12dp</dimen>
     <dimen name="margin_small">6dp</dimen>
-    <dimen name="margin_xsmall">3dp</dimen>
+    <dimen name="margin_xsmall">5dp</dimen>
     <dimen name="margin_xxxlarge">64dp</dimen>
 
     <!-- Slightly smaller text -->
     <dimen name="text_xlarge">24sp</dimen>
 
-    <dimen name="text_large">18sp</dimen>
+    <dimen name="button_text_size">18sp</dimen>
     <dimen name="text_medium">15sp</dimen>
-    <dimen name="text_small">12sp</dimen>
+    <dimen name="text_small">13sp</dimen>
     <dimen name="text_xsmall">10sp</dimen>
+
+
+    <dimen name="timeText">80sp</dimen>
+    <dimen name="dateTextView">28sp</dimen>
 
     <!-- Compact buttons -->
     <dimen name="btn_width">158dp</dimen>
@@ -28,5 +32,7 @@
     <dimen name="logo_size">67dp</dimen>
     <dimen name="logo_size_m">62dp</dimen>
     <dimen name="CheckBox_size">26dp</dimen>
+
+
 
 </resources>

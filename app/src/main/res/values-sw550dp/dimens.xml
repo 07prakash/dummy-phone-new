@@ -1,0 +1,36 @@
+<resources>
+    <!-- Default sizes (same as base dimens.xml) -->
+    <dimen name="padding_screen">1dp</dimen>
+    <dimen name="padding_large">16dp</dimen>
+
+    <dimen name="margin_large">30dp</dimen>
+    <dimen name="margin_medium">24dp</dimen>
+    <dimen name="margin_small">8dp</dimen>
+    <dimen name="margin_xsmall">9dp</dimen>
+    <dimen name="margin_xxxlarge">60dp</dimen>
+
+    <!-- Balanced text sizes -->
+    <dimen name="text_xlarge">35sp</dimen>
+    <dimen name="button_text_size">28sp</dimen>
+    <dimen name="text_medium">23sp</dimen>
+    <dimen name="text_small">20sp</dimen>
+
+
+    <dimen name="timeText">104sp</dimen>
+    <dimen name="dateTextView">45sp</dimen>
+
+    <dimen name="text_xsmall">12sp</dimen>
+
+    <dimen name="corner_radius">40dp</dimen>
+    <dimen name="corner_radius_large">40dp</dimen>
+
+    <!-- Standard button sizes -->
+    <dimen name="btn_width">210dp</dimen>
+    <dimen name="btn_height">85dp</dimen>
+
+    <dimen name="logo_size">94dp</dimen>
+    <dimen name="logo_size_m">90dp</dimen>
+
+    <dimen name="CheckBox_size">40dp</dimen>
+
+</resources>
