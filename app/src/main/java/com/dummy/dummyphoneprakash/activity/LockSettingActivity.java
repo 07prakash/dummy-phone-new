@@ -1,15 +1,20 @@
 package com.dummy.dummyphoneprakash.activity;
 
 import android.app.ActivityManager;
+import android.app.Dialog;
 import android.content.ComponentName;
 import android.content.Intent;
 import android.content.IntentFilter;
 import android.content.SharedPreferences;
 import android.content.pm.PackageManager;
+import android.graphics.Color;
+import android.graphics.drawable.ColorDrawable;
 import android.os.Build;
 import android.os.Bundle;
 import android.provider.Settings;
 import android.view.View;
+import android.view.Window;
+import android.view.WindowManager;
 import android.widget.Button;
 import android.widget.TextView;
 import android.widget.Toast;
@@ -70,30 +75,48 @@ public class LockSettingActivity extends BaseActivity implements CustomTimePicke
         });
 
         lockBtn.setOnClickListener(v -> {
-            // First check accessibility permission with a dialog
-            new AlertDialog.Builder(LockSettingActivity.this)
-                    .setTitle("Permission Required")
-                    .setMessage("dummy Phone needs accessibility permission to monitor and block apps. Please enable it in the next screen.")
-                    .setPositiveButton("Go to Settings", (dialog, which) -> {
-                        checkAccessibilityPermission();
-                        // Save lock state and duration
-                        long currentTime = System.currentTimeMillis();
-                        long durationMillis = selectedMinutes * 60 * 1000L;
-                        long targetEndTime = currentTime + durationMillis;
+            // Create dialog with custom layout
+            final Dialog dialog = new Dialog(LockSettingActivity.this);
+            dialog.setContentView(R.layout.accessibility_permission_dialog); // Use your XML layout
 
-                        prefs.edit()
-                                .putLong("lock_start_time", currentTime)
-                                .putLong("target_end_time", targetEndTime) // Add this
-                                .putLong("lock_duration", durationMillis)
-                                .putBoolean("is_locked", true)
-                                .apply();
-                    })
-                    .setNegativeButton("Cancel", null)
-                    .show();
+            // Set dialog properties
+            dialog.setCancelable(true);
 
+            // Configure dialog window
+            Window window = dialog.getWindow();
+            if (window != null) {
+                window.setBackgroundDrawable(new ColorDrawable(Color.TRANSPARENT));
+                window.setLayout(WindowManager.LayoutParams.MATCH_PARENT, WindowManager.LayoutParams.MATCH_PARENT);
+            }
 
+            // Initialize buttons from your layout
+            Button goToSettingsButton = dialog.findViewById(R.id.goToSettingsButton);
+            Button cancelButton = dialog.findViewById(R.id.cancelButton);
+
+            // Set button click listeners
+            goToSettingsButton.setOnClickListener(view -> {
+                checkAccessibilityPermission();
+                // Save lock state and duration
+                long currentTime = System.currentTimeMillis();
+                long durationMillis = selectedMinutes * 60 * 1000L;
+                long targetEndTime = currentTime + durationMillis;
+
+                prefs.edit()
+                        .putLong("lock_start_time", currentTime)
+                        .putLong("target_end_time", targetEndTime)
+                        .putLong("lock_duration", durationMillis)
+                        .putBoolean("is_locked", true)
+                        .apply();
+                dialog.dismiss();
+            });
+
+            cancelButton.setOnClickListener(view -> {
+                dialog.dismiss();
+            });
+
+            // Show the dialog
+            dialog.show();
         });
-
         // In LockSettingActivity's unlockBtn click listener:
         unlockBtn.setOnClickListener(v -> {
             // Calculate remaining time in milliseconds

@@ -1,15 +1,20 @@
 package com.dummy.dummyphoneprakash;
 
 import android.app.Activity;
-import android.app.AlertDialog;
+import android.app.Dialog;
+import android.content.ActivityNotFoundException;
 import android.content.ComponentName;
 import android.content.Context;
-import android.content.DialogInterface;
 import android.content.Intent;
+import android.graphics.Color;
+import android.graphics.drawable.ColorDrawable;
 import android.os.Build;
 import android.provider.Settings;
 import android.service.notification.NotificationListenerService;
 import android.util.Log;
+import android.view.Window;
+import android.view.WindowManager;
+import android.widget.Button;
 import android.widget.Toast;
 
 public class NotificationPermissionHelper {
@@ -28,21 +33,42 @@ public class NotificationPermissionHelper {
     }
 
     private static void showPermissionExplanation(Activity activity) {
-        AlertDialog dialog = new AlertDialog.Builder(activity)
-                .setTitle("Notification Access Required")
-                .setMessage("To use this app, you must enable notification access. The app cannot function without this permission.")
-                .setPositiveButton("Enable", (d, which) -> {
-                    openNotificationSettings(activity);
-                })
-                .setCancelable(false) // This prevents dismissal by tapping outside or back button
-                .create();
+        // Create dialog with custom layout
+        final Dialog dialog = new Dialog(activity);
+        dialog.setContentView(R.layout.notification_dialog); // Use your XML layout name here
 
-        // If you want to prevent closing even with the negative button,
-        // remove the negative button entirely or handle it differently
-        dialog.setButton(DialogInterface.BUTTON_NEGATIVE, "Exit App", (d, which) -> {
+        // Set dialog properties
+        dialog.setCancelable(false);
+
+        // Configure dialog window
+        Window window = dialog.getWindow();
+        if (window != null) {
+            window.setBackgroundDrawable(new ColorDrawable(Color.TRANSPARENT));
+            window.setLayout(WindowManager.LayoutParams.MATCH_PARENT, WindowManager.LayoutParams.MATCH_PARENT);
+        }
+
+        // Initialize buttons
+        Button exitButton = dialog.findViewById(R.id.exitButton);
+        Button enableButton = dialog.findViewById(R.id.enableButton);
+
+        // Set button click listeners
+        exitButton.setOnClickListener(v -> {
+            try {
+                Intent homeSettingsIntent = new Intent(Settings.ACTION_HOME_SETTINGS);
+                activity.startActivity(homeSettingsIntent);
+            } catch (ActivityNotFoundException e) {
+                Toast.makeText(activity, "Settings not available", Toast.LENGTH_SHORT).show();
+            }
             activity.finish();
+            dialog.dismiss();
         });
 
+        enableButton.setOnClickListener(v -> {
+            openNotificationSettings(activity);
+            dialog.dismiss();
+        });
+
+        // Show the dialog
         dialog.show();
     }
 

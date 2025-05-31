@@ -6,6 +6,7 @@ import android.content.SharedPreferences;
 import android.graphics.Color;
 import android.net.Uri;
 import android.os.Bundle;
+import android.provider.Settings;
 import android.text.SpannableString;
 import android.text.Spanned;
 import android.text.method.LinkMovementMethod;
@@ -61,6 +62,8 @@ public class WelcomeDialogFragment extends DialogFragment {
         });
 
         exitButton.setOnClickListener(v -> {
+            Intent homeSettingsIntent = new Intent(Settings.ACTION_HOME_SETTINGS);
+            startActivity(homeSettingsIntent);
             requireActivity().finish();
         });
 

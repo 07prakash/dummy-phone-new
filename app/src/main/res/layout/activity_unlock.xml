@@ -34,7 +34,7 @@
         <Button
             android:id="@+id/earlyAccessBtn"
             android:layout_width="0dp"
-            android:layout_height="wrap_content"
+            android:layout_height="@dimen/btn_height"
             android:layout_above="@+id/exitOut"
             android:backgroundTint="#0000"
             android:text="Unlock Early"
@@ -49,7 +49,7 @@
         <Button
             android:id="@+id/exitOut"
             android:layout_width="match_parent"
-            android:layout_height="wrap_content"
+            android:layout_height="@dimen/btn_height"
             android:layout_alignParentBottom="true"
             android:backgroundTint="@color/colorPrimary"
             android:text="Exit to Settings"
