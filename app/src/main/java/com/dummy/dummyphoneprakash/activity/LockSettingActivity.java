@@ -266,6 +266,12 @@ public class LockSettingActivity extends BaseActivity implements CustomTimePicke
         selectedMinutes = (int) Math.max(durationInMillis / (60 * 1000), 1);
         updateTimerDisplay();
     }
+
+    @Override
+    public void onCancel() {
+
+    }
+
     @Override
     protected void onResume() {
         super.onResume();

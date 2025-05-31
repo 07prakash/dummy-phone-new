@@ -9,10 +9,11 @@ import android.widget.NumberPicker;
 import android.widget.TextView;
 
 import androidx.annotation.NonNull;
-import androidx.appcompat.app.AlertDialog;
 import androidx.fragment.app.DialogFragment;
 
 import com.dummy.dummyphoneprakash.R;
+import com.google.android.material.button.MaterialButton;
+import com.google.android.material.dialog.MaterialAlertDialogBuilder;
 
 import java.util.concurrent.TimeUnit;
 
@@ -20,10 +21,12 @@ public class CustomTimePickerFragment extends DialogFragment {
 
     public interface TimePickerListener {
         void onTimeSet(long durationInMillis);
+        void onCancel();
     }
 
     private TimePickerListener listener;
     private TextView selectedTimeTextView;
+    private MaterialButton cancelButton, setButton;
     private long selectedDuration = 0;
 
     @Override
@@ -32,41 +35,34 @@ public class CustomTimePickerFragment extends DialogFragment {
         try {
             listener = (TimePickerListener) context;
         } catch (ClassCastException e) {
-            throw new ClassCastException(context.toString() + " must implement TimePickerListener");
+            throw new ClassCastException(context + " must implement TimePickerListener");
         }
     }
 
     @NonNull
     @Override
     public Dialog onCreateDialog(Bundle savedInstanceState) {
-        AlertDialog.Builder builder = new AlertDialog.Builder(requireActivity());
+        MaterialAlertDialogBuilder builder = new MaterialAlertDialogBuilder(requireActivity());
         LayoutInflater inflater = requireActivity().getLayoutInflater();
         View dialogView = inflater.inflate(R.layout.custom_time_picker, null);
 
+
+        // Initialize views
         NumberPicker monthPicker = dialogView.findViewById(R.id.monthPicker);
         NumberPicker dayPicker = dialogView.findViewById(R.id.dayPicker);
         NumberPicker hourPicker = dialogView.findViewById(R.id.hourPicker);
         NumberPicker minutePicker = dialogView.findViewById(R.id.minutePicker);
         selectedTimeTextView = dialogView.findViewById(R.id.countdownTextView);
+        cancelButton = dialogView.findViewById(R.id.cancelButton);
+        setButton = dialogView.findViewById(R.id.setButton);
 
         // Set up pickers
-        monthPicker.setMinValue(0);
-        monthPicker.setMaxValue(12);
-        monthPicker.setFormatter(value -> value + " mo");
+        setupNumberPicker(monthPicker, 0, 12, "mo");
+        setupNumberPicker(dayPicker, 0, 31, "d");
+        setupNumberPicker(hourPicker, 0, 23, "h");
+        setupNumberPicker(minutePicker, 0, 59, "m");
 
-        dayPicker.setMinValue(0);
-        dayPicker.setMaxValue(31);
-        dayPicker.setFormatter(value -> value + " d");
-
-        hourPicker.setMinValue(0);
-        hourPicker.setMaxValue(23);
-        hourPicker.setFormatter(value -> value + " h");
-
-        minutePicker.setMinValue(0);
-        minutePicker.setMaxValue(59);
-        minutePicker.setFormatter(value -> value + " m");
-
-        // Update selected time display when any picker changes
+        // Set up value change listener
         NumberPicker.OnValueChangeListener valueChangeListener = (picker, oldVal, newVal) -> {
             selectedDuration = calculateDurationInMillis(
                     monthPicker.getValue(),
@@ -85,18 +81,38 @@ public class CustomTimePickerFragment extends DialogFragment {
         // Initialize display
         updateSelectedTimeDisplay();
 
-        builder.setView(dialogView)
-                .setTitle("Select Duration")
-                .setPositiveButton("Set", (dialog, id) -> {
-                    if (listener != null) {
-                        listener.onTimeSet(selectedDuration);
-                    }
-                })
-                .setNegativeButton("Cancel", (dialog, id) -> {
-                    getDialog().cancel();
-                });
+        // Set button click listeners
+        cancelButton.setOnClickListener(v -> {
+            if (listener != null) {
+                listener.onCancel();
+            }
+            dismiss();
+        });
 
-        return builder.create();
+        setButton.setOnClickListener(v -> {
+            if (listener != null && selectedDuration > 0) {
+                listener.onTimeSet(selectedDuration);
+                dismiss();
+            } else {
+                selectedTimeTextView.setTextColor(getResources().getColor(android.R.color.holo_red_dark));
+                selectedTimeTextView.setText("Please select a duration");
+            }
+        });
+
+        builder.setView(dialogView);
+        Dialog dialog = builder.create();
+
+        // Remove default buttons area
+        dialog.setCanceledOnTouchOutside(false);
+
+        return dialog;
+    }
+
+    private void setupNumberPicker(NumberPicker picker, int min, int max, String suffix) {
+        picker.setMinValue(min);
+        picker.setMaxValue(max);
+        picker.setFormatter(value -> value == 0 ? "0" : value + suffix);
+        picker.setWrapSelectorWheel(false);
     }
 
     private long calculateDurationInMillis(int months, int days, int hours, int minutes) {
@@ -119,6 +135,7 @@ public class CustomTimePickerFragment extends DialogFragment {
             timeText.append(minutes).append("m");
         }
 
+        selectedTimeTextView.setTextColor(getResources().getColor(R.color.white));
         selectedTimeTextView.setText(timeText.toString().trim());
     }
 }
