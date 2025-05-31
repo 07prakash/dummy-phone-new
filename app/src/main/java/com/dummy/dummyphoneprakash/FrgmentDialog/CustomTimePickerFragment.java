@@ -5,6 +5,8 @@ import android.content.Context;
 import android.os.Bundle;
 import android.view.LayoutInflater;
 import android.view.View;
+import android.view.Window;
+import android.view.WindowManager;
 import android.widget.NumberPicker;
 import android.widget.TextView;
 
@@ -45,7 +47,6 @@ public class CustomTimePickerFragment extends DialogFragment {
         MaterialAlertDialogBuilder builder = new MaterialAlertDialogBuilder(requireActivity());
         LayoutInflater inflater = requireActivity().getLayoutInflater();
         View dialogView = inflater.inflate(R.layout.custom_time_picker, null);
-
 
         // Initialize views
         NumberPicker monthPicker = dialogView.findViewById(R.id.monthPicker);
@@ -102,8 +103,12 @@ public class CustomTimePickerFragment extends DialogFragment {
         builder.setView(dialogView);
         Dialog dialog = builder.create();
 
-        // Remove default buttons area
-        dialog.setCanceledOnTouchOutside(false);
+        // Configure dialog window
+        Window window = dialog.getWindow();
+        if (window != null) {
+            window.setBackgroundDrawableResource(android.R.color.transparent);
+            window.setSoftInputMode(WindowManager.LayoutParams.SOFT_INPUT_STATE_ALWAYS_HIDDEN);
+        }
 
         return dialog;
     }
