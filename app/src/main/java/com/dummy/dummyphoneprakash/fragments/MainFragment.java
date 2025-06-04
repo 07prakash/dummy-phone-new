@@ -1,13 +1,6 @@
 package com.dummy.dummyphoneprakash.fragments;
 
 
-
-
-
-
-
-
-
 import android.content.Intent;
 import android.content.pm.PackageManager;
 import android.content.pm.ResolveInfo;
@@ -19,6 +12,7 @@ import android.view.ViewGroup;
 import androidx.recyclerview.widget.GridLayoutManager;
 import androidx.recyclerview.widget.RecyclerView;
 import com.dummy.dummyphoneprakash.R;
+import com.dummy.dummyphoneprakash.WebViewActivity;
 import com.dummy.dummyphoneprakash.adapter.AppAdapter;
 import com.dummy.dummyphoneprakash.AppInfo;
 import com.dummy.dummyphoneprakash.SharedPreferencesHelper;
@@ -77,10 +71,18 @@ public class MainFragment extends BaseFragment implements AppAdapter.AppClickLis
     @Override
     public void onAppClick(AppInfo app) {
         try {
-            PackageManager pm = requireActivity().getPackageManager();
-            Intent intent = pm.getLaunchIntentForPackage(app.packageName);
-            if (intent != null) {
+            if ("com.google.android.googlequicksearchbox".equals(app.packageName)) {
+                // Open WebViewActivity for Google app
+                Intent intent = new Intent(getActivity(), WebViewActivity.class);
                 startActivity(intent);
+            }
+            else {
+                // Normal app launch for other apps
+                PackageManager pm = requireActivity().getPackageManager();
+                Intent intent = pm.getLaunchIntentForPackage(app.packageName);
+                if (intent != null) {
+                    startActivity(intent);
+                }
             }
         } catch (Exception e) {
             Log.e("MainFragment", "Error launching app", e);

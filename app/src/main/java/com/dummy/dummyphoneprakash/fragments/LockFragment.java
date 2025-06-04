@@ -54,7 +54,8 @@ public class LockFragment extends BaseFragment {
                 "com.coloros.safecenter",
                 "com.huawei.systemmanager",
                 "com.hihonor.systemmanager",
-                "com.transsion.XOSLauncher.settings"
+                "com.transsion.XOSLauncher.settings",
+                "com.android.chrome"
         ));
 
         adapter = new LockAppAdapter(
