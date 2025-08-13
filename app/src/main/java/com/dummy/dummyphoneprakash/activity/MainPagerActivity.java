@@ -52,6 +52,10 @@ public class MainPagerActivity extends BaseActivity {
         }
     }
 
+    public boolean isTaskRoot() {
+        return false;
+    }
+
     @Override
     public void onBackPressed() {
         int currentItem = viewPager.getCurrentItem();

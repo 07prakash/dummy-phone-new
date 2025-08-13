@@ -71,19 +71,13 @@ public class MainFragment extends BaseFragment implements AppAdapter.AppClickLis
     @Override
     public void onAppClick(AppInfo app) {
         try {
-            if ("com.google.android.googlequicksearchbox".equals(app.packageName)) {
-                // Open WebViewActivity for Google app
-                Intent intent = new Intent(getActivity(), WebViewActivity.class);
-                startActivity(intent);
-            }
-            else {
                 // Normal app launch for other apps
                 PackageManager pm = requireActivity().getPackageManager();
                 Intent intent = pm.getLaunchIntentForPackage(app.packageName);
                 if (intent != null) {
                     startActivity(intent);
                 }
-            }
+
         } catch (Exception e) {
             Log.e("MainFragment", "Error launching app", e);
         }
