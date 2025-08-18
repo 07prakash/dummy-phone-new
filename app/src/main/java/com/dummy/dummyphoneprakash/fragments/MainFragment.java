@@ -71,16 +71,96 @@ public class MainFragment extends BaseFragment implements AppAdapter.AppClickLis
     @Override
     public void onAppClick(AppInfo app) {
         try {
+            // Check if the app is a browser and redirect to WebView
+            if (isBrowserApp(app.packageName)) {
+                Intent webViewIntent = new Intent(requireActivity(), WebViewActivity.class);
+                startActivity(webViewIntent);
+            } else {
                 // Normal app launch for other apps
                 PackageManager pm = requireActivity().getPackageManager();
                 Intent intent = pm.getLaunchIntentForPackage(app.packageName);
                 if (intent != null) {
                     startActivity(intent);
                 }
+            }
 
         } catch (Exception e) {
             Log.e("MainFragment", "Error launching app", e);
         }
+    }
+
+    private boolean isBrowserApp(String packageName) {
+        // List of common browser package names
+        String[] browserPackages = {
+                "com.google.android.googlequicksearchbox", // Google Search
+                "com.android.chrome",           // Google Chrome
+                "com.google.android.apps.chrome",
+                "org.mozilla.firefox",          // Mozilla Firefox
+                "org.mozilla.firefox_beta",
+                "com.microsoft.emmx",           // Microsoft Edge
+                "com.microsoft.emmx.beta",
+                "com.opera.browser",            // Opera Browser
+                "com.opera.browser.beta",
+                "com.opera.mini.native",        // Opera Mini
+                "com.uc.browser.en",            // UC Browser
+                "com.uc.browser.hd",
+                "com.baidu.browser.apps",       // Baidu Browser
+                "com.baidu.browser",
+                "com.qihoo.browser",            // 360 Browser
+                "com.qihoo.browser.standard",
+                "com.tencent.mtt",              // QQ Browser
+                "com.tencent.mtt.x86",
+                "com.sogou.mobile.explorer",    // Sogou Browser
+                "com.sec.android.app.browser",  // Samsung Internet
+                "com.samsung.android.app.sbrowser",
+                "com.samsung.android.browser",
+                "com.android.browser",          // Android Browser (AOSP)
+                "com.google.android.browser",
+                "com.mi.global.browser",        // Xiaomi Browser
+                "com.miui.browser",
+                "com.huawei.browser",           // Huawei Browser
+                "com.huawei.hwvplayer.youku",
+                "com.coloros.browser",          // OPPO Browser
+                "com.oppo.browser",
+                "com.vivo.browser",             // Vivo Browser
+                "com.vivo.browser.provider",
+                "com.oneplus.browser",          // OnePlus Browser
+                "com.oneplus.browser.provider",
+                "com.lenovo.browser",           // Lenovo Browser
+                "com.asus.browser",             // ASUS Browser
+                "com.sonyericsson.browser",     // Sony Browser
+                "com.lge.browser",              // LG Browser
+                "com.htc.browser",              // HTC Browser
+                "com.motorola.browser",         // Motorola Browser
+                "com.alibaba.browser",          // Alibaba Browser
+                "com.alibaba.browser.provider",
+                "com.duckduckgo.mobile.android", // DuckDuckGo Browser
+                "com.brave.browser",            // Brave Browser
+                "com.brave.browser_beta",
+                "com.kiwibrowser.browser",      // Kiwi Browser
+                "com.kiwibrowser.browser.beta",
+                "mark.via.gp",                  // Via Browser
+                "de.baumann.browser",           // FOSS Browser
+                "org.adblockplus.browser",      // Adblock Browser
+                "com.cloudmosa.puffinFree",     // Puffin Browser
+                "com.cloudmosa.puffin",
+                "com.maxthon.cloudbrowser",     // Maxthon Browser
+                "com.maxthon.cloudbrowser.pro",
+                "com.yandex.browser",           // Yandex Browser
+                "com.yandex.browser.beta",
+                "com.naver.whale",              // Whale Browser
+                "com.naver.whale.beta",
+                "com.sec.android.app.sbrowser", // Samsung Internet (alternative)
+                "com.samsung.android.sbrowser",
+                "com.samsung.android.app.sbrowser.beta"
+        };
+
+        for (String browserPackage : browserPackages) {
+            if (packageName.equals(browserPackage)) {
+                return true;
+            }
+        }
+        return false;
     }
 
     @Override
