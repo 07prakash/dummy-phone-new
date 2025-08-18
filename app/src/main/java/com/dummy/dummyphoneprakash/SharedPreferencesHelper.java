@@ -14,6 +14,10 @@ public class SharedPreferencesHelper {
 
     private static final String KEY_UNBLOCK_ALWAYS = "unblock_always"; // New key
 
+    // Scroll blocking keys
+    private static final String KEY_SCROLL_BLOCKING_ENABLED = "scroll_blocking_enabled";
+    private static final String KEY_SCROLL_BLOCKED_APPS = "scroll_blocked_apps";
+    private static final String KEY_SHORT_VIDEO_BLOCKING_ENABLED = "short_video_blocking_enabled";
 
     private static final String KEY_TARGET_END_TIME = "target_end_time";
 
@@ -243,6 +247,80 @@ public class SharedPreferencesHelper {
 
     }};
 
+    // Default apps that should have scroll blocking enabled
+    private static final Set<String> DEFAULT_SCROLL_BLOCKED_APPS = new HashSet<String>() {{
+        // Social media apps with short videos
+        add("com.facebook.katana");           // Facebook
+        add("com.facebook.orca");             // Facebook Messenger
+        add("com.instagram.android");         // Instagram
+        add("com.zhiliaoapp.musically");      // TikTok
+        add("com.ss.android.ugc.tiktok");     // TikTok (alternative package)
+        add("com.google.android.youtube");    // YouTube
+        add("com.google.android.apps.youtube.kids"); // YouTube Kids
+        add("com.snapchat.android");          // Snapchat
+        add("com.twitter.android");           // Twitter/X
+        add("com.reddit.frontpage");          // Reddit
+        add("com.reddit.launch");             // Reddit (alternative)
+        add("com.linkedin.android");          // LinkedIn
+        add("com.pinterest");                 // Pinterest
+        add("com.whatsapp");                  // WhatsApp
+        add("com.tencent.mm");                // WeChat
+        add("com.tencent.qq");                // QQ
+        add("com.tencent.mobileqq");          // QQ (alternative)
+        add("com.sina.weibo");                // Weibo
+        add("com.tencent.weishi");            // Weishi
+        add("com.ss.android.article.news");   // Toutiao
+        add("com.ss.android.ugc.aweme");      // Douyin
+        add("com.ss.android.ugc.aweme.lite"); // Douyin Lite
+        add("com.kwai.video");                // Kuaishou
+        add("com.kwai.video.lite");           // Kuaishou Lite
+        add("com.ss.android.ugc.live");       // Live streaming apps
+        add("com.netease.cloudmusic");        // NetEase Cloud Music
+        add("com.tencent.music");             // QQ Music
+        add("com.kugou.android");             // Kugou Music
+        add("com.kuwo.kwmusiccar");           // Kuwo Music
+        add("com.ximalaya.ting.android");     // Ximalaya
+        add("com.qingting.fm");               // Qingting FM
+        add("com.xiaoying.tvmenuv8");         // Xiaoying
+        add("com.quvideo.xiaoying");          // Xiaoying (alternative)
+        add("com.lemon.lv");                  // Lemon8
+        add("com.bytedance.lemon8");          // Lemon8 (alternative)
+        add("com.bytedance.ies");             // ByteDance apps
+        add("com.bytedance.ies.lite");        // ByteDance apps lite
+        add("com.ss.android.ugc.trill");      // Triller
+        add("com.musical.ly");                // Musical.ly (old TikTok)
+        add("com.spotify.music");             // Spotify
+        add("com.apple.android.music");       // Apple Music
+        add("com.amazon.music.android");      // Amazon Music
+        add("com.soundcloud.android");        // SoundCloud
+        add("com.deezer.android");            // Deezer
+        add("com.audible.application");       // Audible
+        add("com.google.android.apps.podcasts"); // Google Podcasts
+        add("com.podcastaddict");             // Podcast Addict
+        add("com.anchor.fm");                 // Anchor
+        add("com.stitcher.app");              // Stitcher
+        add("com.overcast.fm");               // Overcast
+        add("com.castro.fm");                 // Castro
+        add("com.pocketcasts.android");       // Pocket Casts
+        add("com.breaker.audio");             // Breaker
+        add("com.radiopublic.android");       // RadioPublic
+        add("com.spotify.music.android");     // Spotify (alternative)
+        add("com.spotify.music.android.lite"); // Spotify Lite
+        add("com.spotify.music.android.beta"); // Spotify Beta
+        add("com.spotify.music.android.debug"); // Spotify Debug
+        add("com.spotify.music.android.test"); // Spotify Test
+        add("com.spotify.music.android.dev"); // Spotify Dev
+        add("com.spotify.music.android.staging"); // Spotify Staging
+        add("com.spotify.music.android.production"); // Spotify Production
+        add("com.spotify.music.android.release"); // Spotify Release
+        add("com.spotify.music.android.debug"); // Spotify Debug
+        add("com.spotify.music.android.test"); // Spotify Test
+        add("com.spotify.music.android.dev"); // Spotify Dev
+        add("com.spotify.music.android.staging"); // Spotify Staging
+        add("com.spotify.music.android.production"); // Spotify Production
+        add("com.spotify.music.android.release"); // Spotify Release
+    }};
+
     private final SharedPreferences prefs;
 
 
@@ -251,6 +329,8 @@ public class SharedPreferencesHelper {
         prefs = PreferenceManager.getDefaultSharedPreferences(context);
         initializeEssentialApps();
         initializeUnblockAlwaysApps(); // Initialize the new set
+        initializeScrollBlockedApps(); // Initialize scroll blocked apps
+        initializeScrollBlockingSettings(); // Initialize scroll blocking settings
     }
 
     // New method to initialize unblock_always set
@@ -354,5 +434,67 @@ public class SharedPreferencesHelper {
     public boolean isTimerActive() {
         return prefs.getBoolean(KEY_IS_LOCKED, false) &&
                 System.currentTimeMillis() < prefs.getLong(KEY_TARGET_END_TIME, 0);
+    }
+
+    // Scroll blocking methods
+    public void setScrollBlockingEnabled(boolean enabled) {
+        prefs.edit().putBoolean(KEY_SCROLL_BLOCKING_ENABLED, enabled).apply();
+    }
+
+    public boolean isScrollBlockingEnabled() {
+        return prefs.getBoolean(KEY_SCROLL_BLOCKING_ENABLED, true);
+    }
+
+    public void setShortVideoBlockingEnabled(boolean enabled) {
+        prefs.edit().putBoolean(KEY_SHORT_VIDEO_BLOCKING_ENABLED, enabled).apply();
+    }
+
+    public boolean isShortVideoBlockingEnabled() {
+        return prefs.getBoolean(KEY_SHORT_VIDEO_BLOCKING_ENABLED, true);
+    }
+
+    public Set<String> getScrollBlockedApps() {
+        return prefs.getStringSet(KEY_SCROLL_BLOCKED_APPS, new HashSet<>(DEFAULT_SCROLL_BLOCKED_APPS));
+    }
+
+    public void setScrollBlockedApps(Set<String> apps) {
+        prefs.edit().putStringSet(KEY_SCROLL_BLOCKED_APPS, new HashSet<>(apps)).apply();
+    }
+
+    public void addScrollBlockedApp(String packageName) {
+        Set<String> blockedApps = new HashSet<>(getScrollBlockedApps());
+        blockedApps.add(packageName);
+        setScrollBlockedApps(blockedApps);
+    }
+
+    public void removeScrollBlockedApp(String packageName) {
+        Set<String> blockedApps = new HashSet<>(getScrollBlockedApps());
+        blockedApps.remove(packageName);
+        setScrollBlockedApps(blockedApps);
+    }
+
+    public boolean isAppScrollBlocked(String packageName) {
+        return getScrollBlockedApps().contains(packageName);
+    }
+
+    private void initializeScrollBlockedApps() {
+        if (!prefs.contains(KEY_SCROLL_BLOCKED_APPS)) {
+            prefs.edit()
+                    .putStringSet(KEY_SCROLL_BLOCKED_APPS, DEFAULT_SCROLL_BLOCKED_APPS)
+                    .apply();
+        }
+    }
+
+    private void initializeScrollBlockingSettings() {
+        if (!prefs.contains(KEY_SCROLL_BLOCKING_ENABLED)) {
+            prefs.edit()
+                    .putBoolean(KEY_SCROLL_BLOCKING_ENABLED, true)
+                    .apply();
+        }
+        if (!prefs.contains(KEY_SHORT_VIDEO_BLOCKING_ENABLED)) {
+            prefs.edit()
+                    .putBoolean(KEY_SHORT_VIDEO_BLOCKING_ENABLED, true)
+                    .apply();
+        }
     }
 }

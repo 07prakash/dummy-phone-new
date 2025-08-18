@@ -3,6 +3,8 @@
     <dimen name="padding_screen">8dp</dimen>
     <dimen name="padding_large">16dp</dimen>
 
+    <dimen name="padding_small" >16dp</dimen>
+
     <!-- Margins (Responsive) -->
     <dimen name="margin_large">24dp</dimen>
     <dimen name="margin_medium">16dp</dimen>
@@ -43,4 +45,5 @@
     <dimen name="elevation_low">2dp</dimen>
     <dimen name="elevation_medium">4dp</dimen>
     <dimen name="elevation_high">6dp</dimen>
+
 </resources>

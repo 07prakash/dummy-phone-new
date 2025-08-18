@@ -67,6 +67,24 @@
             app:layout_constraintStart_toStartOf="parent"
             app:layout_constraintEnd_toEndOf="parent"/>
 
+<!--        &lt;!&ndash; Scroll Blocking Settings Button &ndash;&gt;-->
+<!--        <com.google.android.material.button.MaterialButton-->
+<!--            android:id="@+id/scrollBlockingBtn"-->
+<!--            android:layout_width="0dp"-->
+<!--            android:layout_height="@dimen/btn_height"-->
+<!--            android:layout_marginTop="@dimen/margin_medium"-->
+<!--            android:layout_marginHorizontal="@dimen/margin_xxxlarge"-->
+<!--            android:text="Scroll Blocking Settings"-->
+<!--            android:textColor="@color/black"-->
+<!--            android:textSize="@dimen/button_text_size"-->
+<!--            android:paddingVertical="@dimen/padding_screen"-->
+<!--            app:cornerRadius="@dimen/corner_radius"-->
+<!--            app:elevation="@dimen/elevation_low"-->
+<!--            app:backgroundTint="@android:color/white"-->
+<!--            app:layout_constraintTop_toBottomOf="@id/timePickerBtn"-->
+<!--            app:layout_constraintStart_toStartOf="parent"-->
+<!--            app:layout_constraintEnd_toEndOf="parent"/>-->
+
         <!-- Timer Display -->
         <TextView
             android:id="@+id/timerDisplay"

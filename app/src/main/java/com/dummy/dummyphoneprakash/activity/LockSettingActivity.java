@@ -26,6 +26,8 @@ import androidx.preference.PreferenceManager;
 import com.dummy.dummyphoneprakash.FrgmentDialog.CustomTimePickerFragment;
 import com.dummy.dummyphoneprakash.FrgmentDialog.WelcomeDialogFragment;
 import com.dummy.dummyphoneprakash.R;
+import com.dummy.dummyphoneprakash.SharedPreferencesHelper;
+import com.dummy.dummyphoneprakash.fragments.ScrollBlockingFragment;
 import com.dummy.dummyphoneprakash.activity.BaseActivity;
 
 import java.util.ArrayList;
@@ -36,7 +38,7 @@ public class LockSettingActivity extends BaseActivity implements CustomTimePicke
 
     // UI Components
     private TextView timerDisplay, choostext;
-    private Button timePickerBtn, lockBtn, unlockBtn, exitBtn;
+    private Button timePickerBtn, lockBtn, unlockBtn, exitBtn, scrollBlockingBtn;
     private FragmentContainerView fragmentContainerView;
 
     // State variables
@@ -63,6 +65,7 @@ public class LockSettingActivity extends BaseActivity implements CustomTimePicke
         lockBtn = findViewById(R.id.lockBtn);
         unlockBtn = findViewById(R.id.unlockBtn);
         exitBtn = findViewById(R.id.exitBtn);
+//        scrollBlockingBtn = findViewById(R.id.scrollBlockingBtn);
         fragmentContainerView = findViewById(R.id.fragmentContainerView);
 
         if (WelcomeDialogFragment.shouldShow(this)) {
@@ -73,6 +76,14 @@ public class LockSettingActivity extends BaseActivity implements CustomTimePicke
             CustomTimePickerFragment timePickerFragment = new CustomTimePickerFragment();
             timePickerFragment.show(getSupportFragmentManager(), "timePicker");
         });
+
+//        scrollBlockingBtn.setOnClickListener(v -> {
+//            ScrollBlockingFragment scrollBlockingFragment = new ScrollBlockingFragment();
+//            getSupportFragmentManager().beginTransaction()
+//                    .replace(R.id.fragmentContainerView, scrollBlockingFragment)
+//                    .addToBackStack(null)
+//                    .commit();
+//        });
 
         lockBtn.setOnClickListener(v -> {
             // Create dialog with custom layout
