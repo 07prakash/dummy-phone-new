@@ -42,9 +42,9 @@ public class AppBlockerService extends AccessibilityService {
             case AccessibilityEvent.TYPE_WINDOW_STATE_CHANGED:
                 handleWindowStateChanged(packageName);
                 break;
-            case AccessibilityEvent.TYPE_VIEW_SCROLLED:
-                handleViewScrolled(packageName, event);
-                break;
+//            case AccessibilityEvent.TYPE_VIEW_SCROLLED:
+//                handleViewScrolled(packageName, event);
+//                break;
             case AccessibilityEvent.TYPE_VIEW_CLICKED:
                 handleViewClicked(packageName, event);
                 break;
@@ -291,7 +291,7 @@ public class AppBlockerService extends AccessibilityService {
         
         AccessibilityServiceInfo info = new AccessibilityServiceInfo();
         info.eventTypes = AccessibilityEvent.TYPE_WINDOW_STATE_CHANGED | 
-                         
+//                         AccessibilityEvent.TYPE_VIEW_SCROLLED |
                          AccessibilityEvent.TYPE_VIEW_CLICKED |
                          AccessibilityEvent.TYPE_VIEW_FOCUSED;
         info.feedbackType = AccessibilityServiceInfo.FEEDBACK_GENERIC;
