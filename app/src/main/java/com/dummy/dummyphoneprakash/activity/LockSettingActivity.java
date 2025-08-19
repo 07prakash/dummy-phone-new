@@ -44,6 +44,7 @@ public class LockSettingActivity extends BaseActivity implements CustomTimePicke
     // State variables
     private int selectedMinutes = 1;
     private SharedPreferences prefs;
+    private SharedPreferencesHelper prefsHelper;
     private long lockStartTime = 0;
 
     @Override
@@ -56,6 +57,7 @@ public class LockSettingActivity extends BaseActivity implements CustomTimePicke
 
         // Initialize SharedPreferences
         prefs = PreferenceManager.getDefaultSharedPreferences(this);
+        prefsHelper = new SharedPreferencesHelper(this);
         lockStartTime = prefs.getLong("lock_start_time", 0);
 
         // Initialize views
@@ -107,10 +109,15 @@ public class LockSettingActivity extends BaseActivity implements CustomTimePicke
             // Set button click listeners
             goToSettingsButton.setOnClickListener(view -> {
                 checkAccessibilityPermission();
+                
                 // Save lock state and duration
                 long currentTime = System.currentTimeMillis();
                 long durationMillis = selectedMinutes * 60 * 1000L;
                 long targetEndTime = currentTime + durationMillis;
+
+                // 🔒 ENABLE scroll and video blocking when locking
+                prefsHelper.setScrollBlockingEnabled(true);
+                prefsHelper.setShortVideoBlockingEnabled(true);
 
                 prefs.edit()
                         .putLong("lock_start_time", currentTime)
@@ -118,6 +125,8 @@ public class LockSettingActivity extends BaseActivity implements CustomTimePicke
                         .putLong("lock_duration", durationMillis)
                         .putBoolean("is_locked", true)
                         .apply();
+                        
+                Toast.makeText(this, "🔒 Lock activated - scroll blocking ENABLED", Toast.LENGTH_LONG).show();
                 dialog.dismiss();
             });
 
@@ -128,6 +137,7 @@ public class LockSettingActivity extends BaseActivity implements CustomTimePicke
             // Show the dialog
             dialog.show();
         });
+        
         // In LockSettingActivity's unlockBtn click listener:
         unlockBtn.setOnClickListener(v -> {
             // Calculate remaining time in milliseconds
@@ -140,6 +150,7 @@ public class LockSettingActivity extends BaseActivity implements CustomTimePicke
             startActivity(unlockIntent);
             finish();
         });
+        
         exitBtn.setOnClickListener(v -> {
             // Open home settings to change launcher
             Intent homeSettingsIntent = new Intent(Settings.ACTION_HOME_SETTINGS);
@@ -155,17 +166,6 @@ public class LockSettingActivity extends BaseActivity implements CustomTimePicke
     public void onHomeSettingsSelected() {
 
     }
-
-
-//    @Override
-//    public void onCancelSelected() {
-//        // User cancelled
-//        Log.d("HomeSettings", "User cancelled launcher change");
-//        // You might want to finish the activity or show a warning
-//        finish();
-//    }
-
-
 
     private void checkAccessibilityPermission() {
         String serviceName = getPackageName() + "/.AppBlockerService";
@@ -243,14 +243,22 @@ public class LockSettingActivity extends BaseActivity implements CustomTimePicke
             updateTimerDisplay();
         }
     }
+    
     private void clearLockState() {
+        // 🔓 DISABLE scroll and video blocking when clearing lock state
+        prefsHelper.setScrollBlockingEnabled(false);
+        prefsHelper.setShortVideoBlockingEnabled(false);
+        
         SharedPreferences prefs = PreferenceManager.getDefaultSharedPreferences(this);
         prefs.edit()
                 .remove("lock_start_time")
                 .remove("lock_duration")
                 .putBoolean("is_locked", false)
                 .apply();
+                
+        Toast.makeText(this, "🔓 Lock cleared - scroll blocking DISABLED", Toast.LENGTH_LONG).show();
     }
+    
     private void updateTimerDisplay() {
         // Convert minutes to milliseconds for calculation
         long totalMillis = selectedMinutes * 60 * 1000L;
@@ -291,7 +299,5 @@ public class LockSettingActivity extends BaseActivity implements CustomTimePicke
             Intent homeSettingsIntent = new Intent(Settings.ACTION_HOME_SETTINGS);
             startActivity(homeSettingsIntent);
         }
-
     }
-
 }
