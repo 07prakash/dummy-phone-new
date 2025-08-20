@@ -13,6 +13,8 @@
     <uses-permission android:name="android.permission.BIND_ACCESSIBILITY_SERVICE" />
     <uses-permission android:name="android.permission.RECEIVE_BOOT_COMPLETED" />
     <uses-permission android:name="android.permission.WAKE_LOCK" />
+    <uses-permission android:name="android.permission.SCHEDULE_EXACT_ALARM" />
+    <uses-permission android:name="android.permission.USE_EXACT_ALARM" />
 
     <application
         android:allowBackup="true"
@@ -60,7 +62,9 @@
             <meta-data
                 android:name="android.accessibilityservice"
                 android:resource="@xml/accessibility_service_config" />
-        </service> <!-- Notification Blocker Service -->
+        </service> 
+        
+        <!-- Notification Blocker Service -->
         <service
             android:name=".NotificationBlockerService"
             android:exported="true"
@@ -70,6 +74,12 @@
                 <action android:name="android.service.notification.NotificationListenerService" />
             </intent-filter>
         </service>
+
+        <!-- Midnight Reset Service for Usage Tracking -->
+        <service
+            android:name=".MidnightResetService"
+            android:exported="false"
+            android:label="Midnight Reset Service" />
 
         <receiver
             android:name=".BootReceiver"

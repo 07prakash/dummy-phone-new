@@ -6,13 +6,17 @@ import androidx.preference.PreferenceManager;
 
 import java.util.HashSet;
 import java.util.Set;
+import java.util.Calendar;
+import java.text.SimpleDateFormat;
+import java.util.Date;
+import java.util.Locale;
 
 public class SharedPreferencesHelper {
     private static final String KEY_ALLOWED_APPS = "allowed_apps";
     private static final String KEY_ESSENTIAL_APPS = "essential_apps";
     private static final String KEY_IS_LOCKED = "is_locked";
 
-    private static final String KEY_UNBLOCK_ALWAYS = "unblock_always"; // New key
+    private static final String KEY_UNBLOCK_ALWAYS = "unblock_always";
 
     // Scroll blocking keys
     private static final String KEY_SCROLL_BLOCKING_ENABLED = "scroll_blocking_enabled";
@@ -21,38 +25,57 @@ public class SharedPreferencesHelper {
 
     private static final String KEY_TARGET_END_TIME = "target_end_time";
 
+    // Usage tracking keys (PER-APP)
+    private static final String KEY_DAILY_USAGE_PREFIX = "daily_usage_";
+    private static final String KEY_LAST_RESET_DATE = "last_reset_date";
+    private static final String KEY_APP_LIMIT_REACHED_PREFIX = "app_limit_reached_"; // PER-APP limit
+    private static final String KEY_APP_SESSION_START = "app_session_start_";
+    private static final long DAILY_LIMIT_MINUTES = 1; // 1 minute per app
+    private static final long DAILY_LIMIT_MILLIS = DAILY_LIMIT_MINUTES * 60 * 1000L;
+
+    // Short video apps that should be tracked individually
+    private static final Set<String> SHORT_VIDEO_APPS = new HashSet<String>() {{
+        add("com.google.android.youtube");    // YouTube (only Shorts blocked)
+        add("com.instagram.android");         // Instagram (only Reels blocked)
+        add("com.zhiliaoapp.musically");      // TikTok (short videos blocked)
+        add("com.ss.android.ugc.tiktok");     // TikTok (alternative package)
+        add("com.ss.android.ugc.aweme");      // Douyin
+        add("com.ss.android.ugc.aweme.lite"); // Douyin Lite
+        add("com.kwai.video");                // Kuaishou
+        add("com.kwai.video.lite");           // Kuaishou Lite
+        add("com.facebook.katana");           // Facebook (only Reels blocked)
+        add("com.snapchat.android");          // Snapchat (only Stories blocked)
+        add("com.reddit.frontpage");          // Reddit (only video posts blocked)
+        add("com.twitter.android");           // Twitter/X (only video posts blocked)
+        add("com.pinterest");                 // Pinterest (only video pins blocked)
+        add("com.lemon.lv");                  // Lemon8
+        add("com.bytedance.lemon8");          // Lemon8 (alternative)
+        add("com.ss.android.ugc.trill");      // Triller
+        add("com.musical.ly");                // Musical.ly (old TikTok)
+    }};
 
     // Default essential apps that cannot be blocked
     private static final Set<String> DEFAULT_ESSENTIAL_APPS = new HashSet<String>() {{
-        add("com.android.dialer");         // Phone dialer
-        add("com.android.contacts");       // Contacts
-        add("com.android.mms");            // Messaging
-
-        // Maps
+        add("com.android.dialer");
+        add("com.android.contacts");
+        add("com.android.mms");
         add("com.google.android.apps.maps");
         add("com.waze");
         add("com.huawei.maps.app");
-
-// Messages
         add("com.google.android.apps.messaging");
         add("com.samsung.android.messaging");
         add("com.miui.mms");
         add("com.coloros.mms");
         add("com.vivo.messaging");
-
-// Dialer
         add("com.google.android.dialer");
         add("com.samsung.android.dialer");
         add("com.coloros.dialer");
         add("com.motorola.dialer");
-
-// Contacts
         add("com.google.android.contacts");
         add("com.samsung.android.contacts");
         add("com.miui.contacts");
         add("com.coloros.contacts");
         add("com.vivo.contact");
-
         add("com.google.android.deskclock");
         add("com.sec.android.app.clockpackage");
         add("com.miui.clock");
@@ -61,7 +84,6 @@ public class SharedPreferencesHelper {
         add("com.vivo.alarmclock");
         add("com.huawei.deskclock");
         add("com.motorola.deskclock");
-
         add("com.android.calculator2");
         add("com.sec.android.app.popupcalculator");
         add("com.miui.calculator");
@@ -70,24 +92,12 @@ public class SharedPreferencesHelper {
         add("com.vivo.calculator");
         add("com.huawei.calculator");
         add("com.motorola.calculator");
-
-
         add("com.dummy.dummyphoneprakash");
-
-
-
-
-
-
-
     }};
 
-    // New: Default apps that should never be blocked (even beyond essentials)
+    // Default apps that should never be blocked (even beyond essentials)
     private static final Set<String> DEFAULT_UNBLOCK_ALWAYS = new HashSet<String>() {{
-
         add("com.dummy.dummyphoneprakash");
-
-       //package names for gallery
         add("com.sec.android.gallery3d");
         add("com.google.android.apps.photos");
         add("com.android.gallery3d");
@@ -105,8 +115,6 @@ public class SharedPreferencesHelper {
         add("com.htc.album");
         add("com.cyngn.gallerynext");
         add("com.simplemobiletools.gallery.pro");
-
-//        keyboard packages
         add("com.android.inputmethod.latin");
         add("com.google.android.inputmethod.latin");
         add("com.samsung.android.honeyboard");
@@ -134,8 +142,6 @@ public class SharedPreferencesHelper {
         add("com.lge.ime");
         add("com.asus.ime");
         add("com.nuance.swype.dtc");
-
-        // SystemUI packages for major Android OEMs
         add("com.android.systemui");
         add("com.google.android.systemui");
         add("com.miui.systemui");
@@ -156,8 +162,6 @@ public class SharedPreferencesHelper {
         add("com.zui.systemui");
         add("com.funtouch.systemui");
         add("com.rog.systemui");
-
-// Launcher packages
         add("com.sec.android.app.launcher");
         add("com.sec.android.app.easylauncher");
         add("com.miui.home");
@@ -187,13 +191,7 @@ public class SharedPreferencesHelper {
         add("com.rog.launcher");
         add("com.htc.launcher");
         add("com.lge.launcher2");
-
-        // Foldable devices
-        add("com.samsung.android.app.cocktailbarservice");  // Samsung Edge/Fold panels
-
-
-
-// Biometric authentication packages
+        add("com.samsung.android.app.cocktailbarservice");
         add("com.samsung.android.biometrics.app.setting");
         add("com.samsung.android.biometrics.service");
         add("com.samsung.android.fingerprint.service");
@@ -221,74 +219,41 @@ public class SharedPreferencesHelper {
         add("com.miui.securitycenter");
         add("com.samsung.android.spay");
         add("com.google.android.gms");
-
-        add("com.samsung.android.knox.attestation");  // Samsung Knox
-        add("com.huawei.systemmanager");  // Huawei security
-        add("com.miui.securitycore");  // Xiaomi security
-        add("com.coloros.safecenter");  // Oppo/Realme security
-        add("com.vivo.securepay");  // Vivo payment security
-        add("com.oneplus.security");  // OnePlus security
-
-        // Additional OEM biometrics
+        add("com.samsung.android.knox.attestation");
+        add("com.huawei.systemmanager");
+        add("com.miui.securitycore");
+        add("com.coloros.safecenter");
+        add("com.vivo.securepay");
+        add("com.oneplus.security");
         add("com.zui.fingerprint");
         add("com.transsion.fingerprint.service");
         add("com.transsion.faceunlock");
-
-// Underlying biometric services
         add("com.android.server.biometrics");
         add("com.qualcomm.qti.biometrics.fingerprint.service");
         add("com.mediatek.biometrics.fingerprint.service");
-
-        add("com.android.keyguard");  // Handles lock screen
-        add("com.google.android.apps.wellbeing");  // Digital wellbeing (affects UI)
-        add("com.google.android.as");  // Android System Intelligence
-        add("com.android.providers.settings");  // System settings provider
-
-
+        add("com.android.keyguard");
+        add("com.google.android.apps.wellbeing");
+        add("com.google.android.as");
+        add("com.android.providers.settings");
     }};
 
-    // Default apps that should have scroll blocking enabled
+    // Regular apps that should have scroll blocking enabled (NOT short video apps)
     private static final Set<String> DEFAULT_SCROLL_BLOCKED_APPS = new HashSet<String>() {{
-        // Social media apps with short videos
-        add("com.facebook.katana");           // Facebook
+        // Regular social media apps (not short video focused)
         add("com.facebook.orca");             // Facebook Messenger
-        add("com.instagram.android");         // Instagram
-        add("com.zhiliaoapp.musically");      // TikTok
-        add("com.ss.android.ugc.tiktok");     // TikTok (alternative package)
-        add("com.google.android.youtube");    // YouTube
-        add("com.google.android.apps.youtube.kids"); // YouTube Kids
-        add("com.snapchat.android");          // Snapchat
-        add("com.twitter.android");           // Twitter/X
-        add("com.reddit.frontpage");          // Reddit
-        add("com.reddit.launch");             // Reddit (alternative)
-        add("com.linkedin.android");          // LinkedIn
-        add("com.pinterest");                 // Pinterest
         add("com.whatsapp");                  // WhatsApp
         add("com.tencent.mm");                // WeChat
         add("com.tencent.qq");                // QQ
         add("com.tencent.mobileqq");          // QQ (alternative)
         add("com.sina.weibo");                // Weibo
-        add("com.tencent.weishi");            // Weishi
+        add("com.linkedin.android");          // LinkedIn
         add("com.ss.android.article.news");   // Toutiao
-        add("com.ss.android.ugc.aweme");      // Douyin
-        add("com.ss.android.ugc.aweme.lite"); // Douyin Lite
-        add("com.kwai.video");                // Kuaishou
-        add("com.kwai.video.lite");           // Kuaishou Lite
-        add("com.ss.android.ugc.live");       // Live streaming apps
         add("com.netease.cloudmusic");        // NetEase Cloud Music
         add("com.tencent.music");             // QQ Music
         add("com.kugou.android");             // Kugou Music
         add("com.kuwo.kwmusiccar");           // Kuwo Music
         add("com.ximalaya.ting.android");     // Ximalaya
         add("com.qingting.fm");               // Qingting FM
-        add("com.xiaoying.tvmenuv8");         // Xiaoying
-        add("com.quvideo.xiaoying");          // Xiaoying (alternative)
-        add("com.lemon.lv");                  // Lemon8
-        add("com.bytedance.lemon8");          // Lemon8 (alternative)
-        add("com.bytedance.ies");             // ByteDance apps
-        add("com.bytedance.ies.lite");        // ByteDance apps lite
-        add("com.ss.android.ugc.trill");      // Triller
-        add("com.musical.ly");                // Musical.ly (old TikTok)
         add("com.spotify.music");             // Spotify
         add("com.apple.android.music");       // Apple Music
         add("com.amazon.music.android");      // Amazon Music
@@ -304,36 +269,19 @@ public class SharedPreferencesHelper {
         add("com.pocketcasts.android");       // Pocket Casts
         add("com.breaker.audio");             // Breaker
         add("com.radiopublic.android");       // RadioPublic
-        add("com.spotify.music.android");     // Spotify (alternative)
-        add("com.spotify.music.android.lite"); // Spotify Lite
-        add("com.spotify.music.android.beta"); // Spotify Beta
-        add("com.spotify.music.android.debug"); // Spotify Debug
-        add("com.spotify.music.android.test"); // Spotify Test
-        add("com.spotify.music.android.dev"); // Spotify Dev
-        add("com.spotify.music.android.staging"); // Spotify Staging
-        add("com.spotify.music.android.production"); // Spotify Production
-        add("com.spotify.music.android.release"); // Spotify Release
-        add("com.spotify.music.android.debug"); // Spotify Debug
-        add("com.spotify.music.android.test"); // Spotify Test
-        add("com.spotify.music.android.dev"); // Spotify Dev
-        add("com.spotify.music.android.staging"); // Spotify Staging
-        add("com.spotify.music.android.production"); // Spotify Production
-        add("com.spotify.music.android.release"); // Spotify Release
     }};
 
     private final SharedPreferences prefs;
 
-
-
     public SharedPreferencesHelper(Context context) {
         prefs = PreferenceManager.getDefaultSharedPreferences(context);
         initializeEssentialApps();
-        initializeUnblockAlwaysApps(); // Initialize the new set
-        initializeScrollBlockedApps(); // Initialize scroll blocked apps
-        initializeScrollBlockingSettings(); // Initialize scroll blocking settings
+        initializeUnblockAlwaysApps();
+        initializeScrollBlockedApps();
+        initializeScrollBlockingSettings();
+        checkAndResetDailyCounters();
     }
 
-    // New method to initialize unblock_always set
     private void initializeUnblockAlwaysApps() {
         if (!prefs.contains(KEY_UNBLOCK_ALWAYS)) {
             prefs.edit()
@@ -368,7 +316,6 @@ public class SharedPreferencesHelper {
                 .apply();
     }
 
-    // New methods for unblock_always functionality
     public Set<String> getUnblockAlwaysApps() {
         return prefs.getStringSet(KEY_UNBLOCK_ALWAYS, new HashSet<>(DEFAULT_UNBLOCK_ALWAYS));
     }
@@ -402,17 +349,15 @@ public class SharedPreferencesHelper {
     }
 
     public boolean isAppAllowed(String packageName) {
-        // First check unblock_always
         if (isInUnblockAlways(packageName)) {
             return true;
         }
 
-        // Then check normal allowed/essential apps
         Set<String> allowed = getAllowedApps();
         Set<String> essential = getEssentialApps();
         return allowed.contains(packageName) || essential.contains(packageName);
     }
-    // Add these methods to SharedPreferencesHelper
+
     public void setTargetEndTime(long targetEndTime) {
         prefs.edit()
                 .putLong(KEY_TARGET_END_TIME, targetEndTime)
@@ -436,13 +381,14 @@ public class SharedPreferencesHelper {
                 System.currentTimeMillis() < prefs.getLong(KEY_TARGET_END_TIME, 0);
     }
 
-    // Scroll blocking methods
+    // ==================== BLOCKING METHODS (PER-APP LOGIC) ====================
+    
     public void setScrollBlockingEnabled(boolean enabled) {
         prefs.edit().putBoolean(KEY_SCROLL_BLOCKING_ENABLED, enabled).apply();
     }
 
     public boolean isScrollBlockingEnabled() {
-        return prefs.getBoolean(KEY_SCROLL_BLOCKING_ENABLED, true);
+        return prefs.getBoolean(KEY_SCROLL_BLOCKING_ENABLED, false);
     }
 
     public void setShortVideoBlockingEnabled(boolean enabled) {
@@ -450,7 +396,7 @@ public class SharedPreferencesHelper {
     }
 
     public boolean isShortVideoBlockingEnabled() {
-        return prefs.getBoolean(KEY_SHORT_VIDEO_BLOCKING_ENABLED, true);
+        return prefs.getBoolean(KEY_SHORT_VIDEO_BLOCKING_ENABLED, false);
     }
 
     public Set<String> getScrollBlockedApps() {
@@ -477,6 +423,245 @@ public class SharedPreferencesHelper {
         return getScrollBlockedApps().contains(packageName);
     }
 
+    // ==================== NEW PER-APP GRANULAR BLOCKING LOGIC ====================
+
+    /**
+     * Check if short video features should be blocked for a SPECIFIC app
+     * NEW LOGIC: Each app has its own 1-minute limit
+     */
+    public boolean shouldBlockShortVideoFeatures(String packageName) {
+        return isBlockingActive() && 
+               isShortVideoApp(packageName) && 
+               isAppLimitReached(packageName); // PER-APP limit check
+    }
+
+    /**
+     * Check if regular scroll blocking should be active (non-short-video apps)
+     */
+    public boolean shouldBlockScrollForApp(String packageName) {
+        return isBlockingActive() && 
+               isScrollBlockingEnabled() && 
+               isAppScrollBlocked(packageName) &&
+               !isShortVideoApp(packageName); // Exclude short video apps from regular scroll blocking
+    }
+
+    /**
+     * NEVER block entire short video apps - only their short video features
+     */
+    public boolean shouldBlockEntireApp(String packageName) {
+        // Short video apps should NEVER be fully blocked
+        if (isShortVideoApp(packageName)) {
+            return false;
+        }
+        
+        // Regular app blocking logic for non-short-video apps
+        return isBlockingActive() && !isAppAllowed(packageName);
+    }
+
+    // ==================== PER-APP USAGE TRACKING METHODS ====================
+
+    public boolean isShortVideoApp(String packageName) {
+        return SHORT_VIDEO_APPS.contains(packageName);
+    }
+
+    private String getCurrentDateString() {
+        SimpleDateFormat dateFormat = new SimpleDateFormat("yyyy-MM-dd", Locale.getDefault());
+        return dateFormat.format(new Date());
+    }
+
+    private void checkAndResetDailyCounters() {
+        String currentDate = getCurrentDateString();
+        String lastResetDate = prefs.getString(KEY_LAST_RESET_DATE, "");
+        
+        if (!currentDate.equals(lastResetDate)) {
+            resetDailyCounters();
+            prefs.edit().putString(KEY_LAST_RESET_DATE, currentDate).apply();
+        }
+    }
+
+    public void resetDailyCounters() {
+        SharedPreferences.Editor editor = prefs.edit();
+        
+        for (String app : SHORT_VIDEO_APPS) {
+            editor.remove(KEY_DAILY_USAGE_PREFIX + app);
+            editor.remove(KEY_APP_LIMIT_REACHED_PREFIX + app);
+            editor.remove(KEY_APP_SESSION_START + app);
+        }
+        
+        // Reset short video blocking when counters reset
+        editor.putBoolean(KEY_SHORT_VIDEO_BLOCKING_ENABLED, false);
+        editor.apply();
+    }
+
+    public void startAppUsageTracking(String packageName) {
+        if (!isShortVideoApp(packageName) || !isBlockingActive()) {
+            return;
+        }
+        
+        long currentTime = System.currentTimeMillis();
+        prefs.edit()
+                .putLong(KEY_APP_SESSION_START + packageName, currentTime)
+                .apply();
+    }
+
+    public void stopAppUsageTracking(String packageName) {
+        if (!isShortVideoApp(packageName) || !isBlockingActive()) {
+            return;
+        }
+        
+        long sessionStart = prefs.getLong(KEY_APP_SESSION_START + packageName, 0);
+        if (sessionStart == 0) {
+            return;
+        }
+        
+        long currentTime = System.currentTimeMillis();
+        long sessionDuration = currentTime - sessionStart;
+        
+        addToDailyUsage(packageName, sessionDuration);
+        prefs.edit().remove(KEY_APP_SESSION_START + packageName).apply();
+    }
+
+    private void addToDailyUsage(String packageName, long durationMillis) {
+        String today = getCurrentDateString();
+        String key = KEY_DAILY_USAGE_PREFIX + packageName + "_" + today;
+        
+        long currentUsage = prefs.getLong(key, 0);
+        long newUsage = currentUsage + durationMillis;
+        
+        prefs.edit().putLong(key, newUsage).apply();
+        
+        // Check if THIS SPECIFIC APP's limit exceeded for the first time
+        if (newUsage >= DAILY_LIMIT_MILLIS && !isAppLimitReached(packageName)) {
+            // Set limit reached for THIS SPECIFIC APP only
+            setAppLimitReached(packageName, true);
+        }
+    }
+
+    public long getDailyUsage(String packageName) {
+        String today = getCurrentDateString();
+        String key = KEY_DAILY_USAGE_PREFIX + packageName + "_" + today;
+        return prefs.getLong(key, 0);
+    }
+
+    public long getTotalDailyUsage() {
+        long totalUsage = 0;
+        for (String app : SHORT_VIDEO_APPS) {
+            totalUsage += getDailyUsage(app);
+        }
+        return totalUsage;
+    }
+
+    public long getRemainingDailyTime() {
+        long totalUsage = getTotalDailyUsage();
+        return Math.max(0, DAILY_LIMIT_MILLIS - totalUsage);
+    }
+
+    /**
+     * Check if ANY app has reached its limit (for general UI display)
+     */
+    public boolean isDailyLimitReached() {
+        return getTotalDailyUsage() >= DAILY_LIMIT_MILLIS;
+    }
+
+    /**
+     * Check if a SPECIFIC app has reached its 1-minute limit
+     */
+    public boolean isAppLimitReached(String packageName) {
+        String today = getCurrentDateString();
+        String key = KEY_APP_LIMIT_REACHED_PREFIX + packageName + "_" + today;
+        return prefs.getBoolean(key, false) || getDailyUsage(packageName) >= DAILY_LIMIT_MILLIS;
+    }
+
+    /**
+     * Set limit reached status for a SPECIFIC app
+     */
+    private void setAppLimitReached(String packageName, boolean reached) {
+        String today = getCurrentDateString();
+        String key = KEY_APP_LIMIT_REACHED_PREFIX + packageName + "_" + today;
+        prefs.edit().putBoolean(key, reached).apply();
+    }
+
+    /**
+     * Get remaining time for a SPECIFIC app
+     */
+    public long getRemainingTimeForApp(String packageName) {
+        long appUsage = getDailyUsage(packageName);
+        return Math.max(0, DAILY_LIMIT_MILLIS - appUsage);
+    }
+
+    public String getFormattedUsageTime(long millis) {
+        if (millis <= 0) return "0s";
+        
+        long totalSeconds = millis / 1000;
+        long minutes = totalSeconds / 60;
+        long seconds = totalSeconds % 60;
+        
+        if (minutes > 0) {
+            return minutes + "m " + seconds + "s";
+        } else {
+            return seconds + "s";
+        }
+    }
+
+    public String getUsageReport() {
+        StringBuilder report = new StringBuilder();
+        report.append("📊 Per-App Short Video Limits:\n");
+        report.append("Each app has a 1-minute daily limit\n\n");
+        
+        boolean anyLimitReached = false;
+        
+        report.append("App Status:\n");
+        for (String app : SHORT_VIDEO_APPS) {
+            long usage = getDailyUsage(app);
+            if (usage > 0 || isPopularApp(app)) {
+                String appName = getAppDisplayName(app);
+                String usageStr = getFormattedUsageTime(usage);
+                long remaining = getRemainingTimeForApp(app);
+                String remainingStr = getFormattedUsageTime(remaining);
+                
+                if (isAppLimitReached(app)) {
+                    report.append("🚫 ").append(appName).append(": ").append(usageStr)
+                           .append(" (BLOCKED)\n");
+                    anyLimitReached = true;
+                } else {
+                    report.append("✅ ").append(appName).append(": ").append(usageStr)
+                           .append(" (").append(remainingStr).append(" left)\n");
+                }
+            }
+        }
+        
+        if (!anyLimitReached && getTotalDailyUsage() == 0) {
+            report.append("No usage recorded today\n");
+        }
+        
+        report.append("\nNote: Only short video features are blocked\n");
+        report.append("Apps remain accessible for other functions");
+        
+        return report.toString();
+    }
+
+    private boolean isPopularApp(String packageName) {
+        return packageName.equals("com.google.android.youtube") ||
+               packageName.equals("com.instagram.android") ||
+               packageName.equals("com.zhiliaoapp.musically") ||
+               packageName.equals("com.ss.android.ugc.tiktok");
+    }
+
+    public String getAppDisplayName(String packageName) {
+        switch (packageName) {
+            case "com.google.android.youtube": return "YouTube";
+            case "com.instagram.android": return "Instagram";
+            case "com.zhiliaoapp.musically":
+            case "com.ss.android.ugc.tiktok": return "TikTok";
+            case "com.facebook.katana": return "Facebook";
+            case "com.snapchat.android": return "Snapchat";
+            case "com.twitter.android": return "Twitter";
+            case "com.reddit.frontpage": return "Reddit";
+            case "com.pinterest": return "Pinterest";
+            default: return packageName.substring(packageName.lastIndexOf('.') + 1);
+        }
+    }
+
     private void initializeScrollBlockedApps() {
         if (!prefs.contains(KEY_SCROLL_BLOCKED_APPS)) {
             prefs.edit()
@@ -488,12 +673,12 @@ public class SharedPreferencesHelper {
     private void initializeScrollBlockingSettings() {
         if (!prefs.contains(KEY_SCROLL_BLOCKING_ENABLED)) {
             prefs.edit()
-                    .putBoolean(KEY_SCROLL_BLOCKING_ENABLED, true)
+                    .putBoolean(KEY_SCROLL_BLOCKING_ENABLED, false) // Default FALSE
                     .apply();
         }
         if (!prefs.contains(KEY_SHORT_VIDEO_BLOCKING_ENABLED)) {
             prefs.edit()
-                    .putBoolean(KEY_SHORT_VIDEO_BLOCKING_ENABLED, true)
+                    .putBoolean(KEY_SHORT_VIDEO_BLOCKING_ENABLED, false) // Default FALSE
                     .apply();
         }
     }

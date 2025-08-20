@@ -16,6 +16,7 @@ import androidx.appcompat.app.AppCompatActivity;
 
 import com.dummy.dummyphoneprakash.R;
 import com.dummy.dummyphoneprakash.SharedPreferencesHelper;
+import com.dummy.dummyphoneprakash.fragments.UsageStatsFragment;
 
 public class UnlockActivity extends BaseActivity {
 
@@ -25,6 +26,7 @@ public class UnlockActivity extends BaseActivity {
     private TextView countdownText;
     private Button earlyAccessBtn;
     private Button exitOut;
+    private Button usageStatsBtn;
 
     // Timer
     private CountDownTimer countDownTimer;
@@ -43,33 +45,17 @@ public class UnlockActivity extends BaseActivity {
         countdownText = findViewById(R.id.countdownText);
         earlyAccessBtn = findViewById(R.id.earlyAccessBtn);
         exitOut = findViewById(R.id.exitOut);
-
-        // Handle exit flow (when coming from settings)
-//        if (getIntent().getBooleanExtra("EXIT_FLOW", false)) {
-//            handleExitFlow();
-//            return;
-//        }
+        usageStatsBtn = findViewById(R.id.usageStatsBtn);
 
         // Setup UI
         setupButtons();
 
         // Start the persistent timer
         startPersistentTimer();
+        
+        // Show current usage info
+        showCurrentUsageInfo();
     }
-
-//    private void handleExitFlow() {
-//        new Handler(Looper.getMainLooper()).postDelayed(() -> {
-//            try {
-//                Intent homeSettingsIntent = new Intent(Settings.ACTION_HOME_SETTINGS);
-//                homeSettingsIntent.addFlags(Intent.FLAG_ACTIVITY_NEW_TASK);
-//                startActivity(homeSettingsIntent);
-//                finish();
-//            } catch (Exception e) {
-//                Toast.makeText(this, "Error opening settings", Toast.LENGTH_SHORT).show();
-//                finish();
-//            }
-//        }, 100);
-//    }
 
     private void setupButtons() {
         earlyAccessBtn.setOnClickListener(v -> showEarlyUnlockConfirmation());
@@ -79,6 +65,50 @@ public class UnlockActivity extends BaseActivity {
             startActivity(intent);
             finish();
         });
+        
+        // Usage stats button
+        usageStatsBtn.setOnClickListener(v -> showUsageStatsFragment());
+    }
+
+    /**
+     * Show usage statistics fragment
+     */
+    private void showUsageStatsFragment() {
+        // Create a simple dialog to show usage stats since UnlockActivity doesn't have fragment container
+        String report = prefsHelper.getUsageReport();
+        
+        new AlertDialog.Builder(this)
+                .setTitle("📊 Short Video Usage Statistics")
+                .setMessage(report)
+                .setPositiveButton("OK", null)
+                .setNeutralButton("Reset (Debug)", (dialog, which) -> {
+                    prefsHelper.resetDailyCounters();
+                    Toast.makeText(this, "🔄 Daily counters reset", Toast.LENGTH_SHORT).show();
+                    showCurrentUsageInfo(); // Refresh display
+                })
+                .show();
+    }
+    
+    /**
+     * Show current usage information
+     */
+    private void showCurrentUsageInfo() {
+        long totalUsage = prefsHelper.getTotalDailyUsage();
+        
+        if (totalUsage > 0) {
+            String totalStr = prefsHelper.getFormattedUsageTime(totalUsage);
+            long remaining = prefsHelper.getRemainingDailyTime();
+            String remainingStr = prefsHelper.getFormattedUsageTime(remaining);
+            
+            String message;
+            if (prefsHelper.isDailyLimitReached()) {
+                message = "🚫 Daily limit reached!\nUsed: " + totalStr + " / 30m";
+            } else {
+                message = "📊 Short video usage today:\nUsed: " + totalStr + " | Remaining: " + remainingStr;
+            }
+            
+            Toast.makeText(this, message, Toast.LENGTH_LONG).show();
+        }
     }
 
     private void startPersistentTimer() {
@@ -142,13 +172,24 @@ public class UnlockActivity extends BaseActivity {
     }
 
     private void showEarlyUnlockConfirmation() {
+        // Show current usage before unlock confirmation
+        String usageInfo = "";
+        long totalUsage = prefsHelper.getTotalDailyUsage();
+        if (totalUsage > 0) {
+            String totalStr = prefsHelper.getFormattedUsageTime(totalUsage);
+            usageInfo = "\n\n📊 Today's short video usage: " + totalStr + " / 30m";
+            if (prefsHelper.isDailyLimitReached()) {
+                usageInfo += "\n🚫 Daily limit reached - blocking will continue until midnight";
+            }
+        }
+        
         new AlertDialog.Builder(this)
                 .setTitle("Early Unlock")
-                .setMessage("Are you sure you want to unlock the device before the timer expires?")
+                .setMessage("Are you sure you want to unlock the device before the timer expires?" + usageInfo)
                 .setPositiveButton("Unlock Now", (dialog, which) -> unlockDevice())
                 .setNegativeButton("Cancel", null)
+                .setNeutralButton("View Stats", (dialog, which) -> showUsageStatsFragment())
                 .show();
-
     }
 
     private void handleTimerFinish() {
@@ -157,10 +198,22 @@ public class UnlockActivity extends BaseActivity {
     }
 
     public void showTimeEndDialog() {
+        // Show usage summary when timer ends
+        String usageInfo = "";
+        long totalUsage = prefsHelper.getTotalDailyUsage();
+        if (totalUsage > 0) {
+            String totalStr = prefsHelper.getFormattedUsageTime(totalUsage);
+            usageInfo = "\n\n📊 Session summary:\nShort video usage: " + totalStr + " / 30m";
+            if (prefsHelper.isDailyLimitReached()) {
+                usageInfo += "\n🚫 Daily limit was reached during this session";
+            }
+        }
+        
         new AlertDialog.Builder(this)
                 .setTitle("Timer Completed")
-                .setMessage("The lock duration has ended. Your device will now be unlocked.")
-                .setPositiveButton("OK", (dialog, which) -> {})
+                .setMessage("The lock duration has ended. Your device will now be unlocked." + usageInfo)
+                .setPositiveButton("OK", null)
+                .setNeutralButton("View Full Stats", (dialog, which) -> showUsageStatsFragment())
                 .setCancelable(false)
                 .show();
     }
@@ -175,6 +228,21 @@ public class UnlockActivity extends BaseActivity {
         if (countDownTimer != null) {
             countDownTimer.cancel();
         }
+
+        // Show final usage summary
+        long totalUsage = prefsHelper.getTotalDailyUsage();
+        if (totalUsage > 0) {
+            String totalStr = prefsHelper.getFormattedUsageTime(totalUsage);
+            String summaryMessage = "🔓 Session ended\n📊 Short video usage: " + totalStr + " / 30m";
+            if (prefsHelper.isDailyLimitReached()) {
+                summaryMessage += "\n🚫 Daily limit reached - blocking continues until midnight";
+            }
+            Toast.makeText(this, summaryMessage, Toast.LENGTH_LONG).show();
+        }
+
+        // DISABLE scroll blocking but keep usage tracking for daily limit
+        prefsHelper.setScrollBlockingEnabled(false);
+        // Note: Don't disable short video blocking if limit reached - it should persist until midnight
 
         // Clear lock state
         prefsHelper.cancelTimer();

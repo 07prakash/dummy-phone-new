@@ -28,7 +28,9 @@ import com.dummy.dummyphoneprakash.FrgmentDialog.WelcomeDialogFragment;
 import com.dummy.dummyphoneprakash.R;
 import com.dummy.dummyphoneprakash.SharedPreferencesHelper;
 import com.dummy.dummyphoneprakash.fragments.ScrollBlockingFragment;
+import com.dummy.dummyphoneprakash.fragments.UsageStatsFragment;
 import com.dummy.dummyphoneprakash.activity.BaseActivity;
+import com.dummy.dummyphoneprakash.MidnightResetService;
 
 import java.util.ArrayList;
 import java.util.List;
@@ -79,18 +81,20 @@ public class LockSettingActivity extends BaseActivity implements CustomTimePicke
             timePickerFragment.show(getSupportFragmentManager(), "timePicker");
         });
 
-//        scrollBlockingBtn.setOnClickListener(v -> {
-//            ScrollBlockingFragment scrollBlockingFragment = new ScrollBlockingFragment();
-//            getSupportFragmentManager().beginTransaction()
-//                    .replace(R.id.fragmentContainerView, scrollBlockingFragment)
-//                    .addToBackStack(null)
-//                    .commit();
-//        });
+        if (scrollBlockingBtn != null) {
+            scrollBlockingBtn.setOnClickListener(v -> {
+                ScrollBlockingFragment scrollBlockingFragment = new ScrollBlockingFragment();
+                getSupportFragmentManager().beginTransaction()
+                        .replace(R.id.fragmentContainerView, scrollBlockingFragment)
+                        .addToBackStack(null)
+                        .commit();
+            });
+        }
 
         lockBtn.setOnClickListener(v -> {
             // Create dialog with custom layout
             final Dialog dialog = new Dialog(LockSettingActivity.this);
-            dialog.setContentView(R.layout.accessibility_permission_dialog); // Use your XML layout
+            dialog.setContentView(R.layout.accessibility_permission_dialog);
 
             // Set dialog properties
             dialog.setCancelable(true);
@@ -115,9 +119,17 @@ public class LockSettingActivity extends BaseActivity implements CustomTimePicke
                 long durationMillis = selectedMinutes * 60 * 1000L;
                 long targetEndTime = currentTime + durationMillis;
 
-                // 🔒 ENABLE scroll and video blocking when locking
+                // 📊 PER-APP LOGIC: Only start usage tracking
+                // Each app gets its own 1-minute limit
+                
+                // Enable regular scroll blocking (for non-short-video apps only)
                 prefsHelper.setScrollBlockingEnabled(true);
-                prefsHelper.setShortVideoBlockingEnabled(true);
+                
+                // Do NOT enable short video blocking - it will auto-enable per-app after 1min limit
+                prefsHelper.setShortVideoBlockingEnabled(false);
+
+                // Start midnight reset service for usage tracking
+                MidnightResetService.startMidnightResetService(this);
 
                 prefs.edit()
                         .putLong("lock_start_time", currentTime)
@@ -125,8 +137,11 @@ public class LockSettingActivity extends BaseActivity implements CustomTimePicke
                         .putLong("lock_duration", durationMillis)
                         .putBoolean("is_locked", true)
                         .apply();
+                
+                // Show usage info
+                showUsageInfo();
                         
-                Toast.makeText(this, "🔒 Lock activated - scroll blocking ENABLED", Toast.LENGTH_LONG).show();
+                Toast.makeText(this, "🔒 Lock activated with PER-APP blocking\n📊 Each app gets 1min limit\n📱 Only short video features blocked", Toast.LENGTH_LONG).show();
                 dialog.dismiss();
             });
 
@@ -138,7 +153,6 @@ public class LockSettingActivity extends BaseActivity implements CustomTimePicke
             dialog.show();
         });
         
-        // In LockSettingActivity's unlockBtn click listener:
         unlockBtn.setOnClickListener(v -> {
             // Calculate remaining time in milliseconds
             long elapsedMillis = System.currentTimeMillis() - lockStartTime;
@@ -151,6 +165,7 @@ public class LockSettingActivity extends BaseActivity implements CustomTimePicke
             finish();
         });
         
+        // RESTORE ORIGINAL exitBtn functionality
         exitBtn.setOnClickListener(v -> {
             // Open home settings to change launcher
             Intent homeSettingsIntent = new Intent(Settings.ACTION_HOME_SETTINGS);
@@ -160,6 +175,11 @@ public class LockSettingActivity extends BaseActivity implements CustomTimePicke
 
         // Update UI based on current state
         updateUI();
+        
+        // Show current usage if there's any
+        if (prefsHelper.getTotalDailyUsage() > 0) {
+            showUsageInfo();
+        }
     }
 
     @Override
@@ -245,7 +265,7 @@ public class LockSettingActivity extends BaseActivity implements CustomTimePicke
     }
     
     private void clearLockState() {
-        // 🔓 DISABLE scroll and video blocking when clearing lock state
+        // 🔓 DISABLE all blocking when clearing lock state
         prefsHelper.setScrollBlockingEnabled(false);
         prefsHelper.setShortVideoBlockingEnabled(false);
         
@@ -256,7 +276,7 @@ public class LockSettingActivity extends BaseActivity implements CustomTimePicke
                 .putBoolean("is_locked", false)
                 .apply();
                 
-        Toast.makeText(this, "🔓 Lock cleared - scroll blocking DISABLED", Toast.LENGTH_LONG).show();
+        Toast.makeText(this, "🔓 Lock cleared - All blocking disabled\n📊 Per-app usage tracking continues until midnight", Toast.LENGTH_LONG).show();
     }
     
     private void updateTimerDisplay() {
@@ -279,6 +299,52 @@ public class LockSettingActivity extends BaseActivity implements CustomTimePicke
         timerDisplay.setText(timeText.toString().trim());
     }
 
+    /**
+     * Show usage statistics fragment
+     */
+    private void showUsageStatsFragment() {
+        UsageStatsFragment statsFragment = new UsageStatsFragment();
+        getSupportFragmentManager().beginTransaction()
+                .replace(R.id.fragmentContainerView, statsFragment)
+                .addToBackStack(null)
+                .commit();
+    }
+
+    /**
+     * Show current per-app usage information
+     */
+    private void showUsageInfo() {
+        if (!prefsHelper.isBlockingActive()) {
+            return;
+        }
+        
+        StringBuilder message = new StringBuilder("📊 Per-App Usage (1min each):\n");
+        
+        boolean anyUsage = false;
+        for (String app : new String[]{"com.google.android.youtube", "com.instagram.android", "com.zhiliaoapp.musically"}) {
+            long usage = prefsHelper.getDailyUsage(app);
+            if (usage > 0) {
+                anyUsage = true;
+                String appName = prefsHelper.getAppDisplayName(app);
+                String usageStr = prefsHelper.getFormattedUsageTime(usage);
+                
+                if (prefsHelper.isAppLimitReached(app)) {
+                    message.append("🚫 ").append(appName).append(": ").append(usageStr).append(" (BLOCKED)\n");
+                } else {
+                    long remaining = prefsHelper.getRemainingTimeForApp(app);
+                    String remainingStr = prefsHelper.getFormattedUsageTime(remaining);
+                    message.append("✅ ").append(appName).append(": ").append(usageStr)
+                           .append(" (").append(remainingStr).append(" left)\n");
+                }
+            }
+        }
+        
+        if (anyUsage) {
+            message.append("\n📱 Apps remain accessible for other features");
+            Toast.makeText(this, message.toString(), Toast.LENGTH_LONG).show();
+        }
+    }
+
     @Override
     public void onTimeSet(long durationInMillis) {
         // Convert milliseconds to minutes (minimum 1 minute)
@@ -298,6 +364,11 @@ public class LockSettingActivity extends BaseActivity implements CustomTimePicke
             // Only open launcher selection if not default launcher
             Intent homeSettingsIntent = new Intent(Settings.ACTION_HOME_SETTINGS);
             startActivity(homeSettingsIntent);
+        }
+        
+        // Refresh usage info when returning to activity
+        if (prefsHelper.getTotalDailyUsage() > 0) {
+            showUsageInfo();
         }
     }
 }
