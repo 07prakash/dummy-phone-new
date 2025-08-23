@@ -13,7 +13,10 @@ import android.text.method.LinkMovementMethod;
 import android.text.style.ClickableSpan;
 import android.view.LayoutInflater;
 import android.view.View;
+import android.graphics.Color;
+import android.graphics.drawable.ColorDrawable;
 import android.view.ViewGroup;
+import android.view.Window;
 import android.widget.Button;
 import android.widget.TextView;
 import android.widget.Toast;
@@ -156,10 +159,13 @@ public class WelcomeDialogFragment extends DialogFragment {
     public void onStart() {
         super.onStart();
         if (getDialog() != null && getDialog().getWindow() != null) {
-            getDialog().getWindow().setLayout(
+            Window window = getDialog().getWindow();
+            window.setLayout(
                     ViewGroup.LayoutParams.MATCH_PARENT,
-                    ViewGroup.LayoutParams.WRAP_CONTENT
+                    ViewGroup.LayoutParams.MATCH_PARENT
             );
+            window.setBackgroundDrawable(new ColorDrawable(Color.TRANSPARENT));
+            window.setWindowAnimations(R.style.DialogAnimation);
         }
     }
 

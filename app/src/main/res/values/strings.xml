@@ -10,9 +10,9 @@
     <string name="i_agree_to_the_privacy_policy_and_terms">I agree to the Privacy Policy and Terms</string>
 
     <!-- Onboarding Strings -->
-    <string name="skip">Skip</string>
+    <string name="previous">Previous</string>
     <string name="next">Next</string>
-    <string name="get_started">Get Started</string>
+
 
     <!-- Onboarding Screen 1 -->
     <string name="onboarding_title_1">Take control of your time</string>
@@ -27,10 +27,8 @@
     <string name="onboarding_desc_3">Your time is valuable. Spend it on learning, family, fitness, or personal growth — not endless scrolling.</string>
 
     <!-- Onboarding Screen 4 -->
-    <string name="onboarding_title_4">Ready to focus?</string>
-    <string name="onboarding_desc_4">Set your time limit, start your journey, and take back control.</string>
-
-    <!-- Onboarding Screen 5 -->
-    <string name="onboarding_title_5">Stay committed to your choice</string>
-    <string name="onboarding_desc_5">If you choose to exit early, a $50 accountability charge will apply. This small penalty helps you stick with your goals.</string>
+    <string name="onboarding_title_4">Stay committed to
+ your choice</string>
+    <string name="onboarding_desc_4">If you choose to exit early, a small accountability charge will apply. This charge is designed to help you stay committed to your goals.</string>
+    <string name="get_started">Get Started</string>
 </resources>

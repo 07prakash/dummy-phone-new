@@ -52,9 +52,7 @@ public class MainPagerActivity extends BaseActivity {
         }
     }
 
-    public boolean isTaskRoot() {
-        return false;
-    }
+    // Using Android's default isTaskRoot() implementation
 
     @Override
     public void onBackPressed() {

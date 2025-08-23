@@ -9,7 +9,7 @@ import com.dummy.dummyphoneprakash.fragments.OnboardingFragment;
 
 public class OnboardingPagerAdapter extends FragmentStateAdapter {
 
-    private static final int NUM_PAGES = 5;
+    private static final int NUM_PAGES = 4;
 
     public OnboardingPagerAdapter(@NonNull FragmentActivity fragmentActivity) {
         super(fragmentActivity);

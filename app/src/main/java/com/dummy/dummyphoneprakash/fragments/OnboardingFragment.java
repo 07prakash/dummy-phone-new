@@ -54,9 +54,6 @@ public class OnboardingFragment extends Fragment {
             case 3:
                 layoutResId = R.layout.onboarding_screen4;
                 break;
-            case 4:
-                layoutResId = R.layout.onboarding_screen5;
-                break;
             default:
                 layoutResId = R.layout.onboarding_screen1;
                 break;

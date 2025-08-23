@@ -9,9 +9,11 @@ import android.widget.LinearLayout;
 import android.widget.TextView;
 
 import androidx.annotation.NonNull;
+import androidx.fragment.app.FragmentManager;
 import androidx.preference.PreferenceManager;
 import androidx.viewpager2.widget.ViewPager2;
 
+import com.dummy.dummyphoneprakash.FrgmentDialog.WelcomeDialogFragment;
 import com.dummy.dummyphoneprakash.R;
 import com.dummy.dummyphoneprakash.adapter.OnboardingPagerAdapter;
 
@@ -29,25 +31,30 @@ public class OnboardingActivity extends BaseActivity {
         
         // Check if onboarding has been completed before
         if (isOnboardingCompleted()) {
-            launchMainActivity();
+            launchLockSettingActivity();
             finish();
             return;
         }
         
         setContentView(R.layout.activity_onboarding);
         
+        // Show welcome dialog first
+        showWelcomeDialog();
+        
         // Initialize views
         viewPager = findViewById(R.id.onboarding_viewpager);
         skipButton = findViewById(R.id.btn_skip);
         nextButton = findViewById(R.id.btn_next);
+        
+        // Change skip button to previous button
+        skipButton.setText(R.string.previous);
         
         // Layouts for all onboarding screens
         layouts = new int[]{
                 R.layout.onboarding_screen1,
                 R.layout.onboarding_screen2,
                 R.layout.onboarding_screen3,
-                R.layout.onboarding_screen4,
-                R.layout.onboarding_screen5
+                R.layout.onboarding_screen4
         };
         
         // Setup ViewPager
@@ -60,8 +67,11 @@ public class OnboardingActivity extends BaseActivity {
         
         // Button click listeners
         skipButton.setOnClickListener(v -> {
-            launchMainActivity();
-            markOnboardingAsCompleted();
+            int current = viewPager.getCurrentItem();
+            if (current > 0) {
+                // Move to previous screen
+                viewPager.setCurrentItem(current - 1);
+            }
         });
         
         nextButton.setOnClickListener(v -> {
@@ -70,11 +80,17 @@ public class OnboardingActivity extends BaseActivity {
                 // Move to next screen
                 viewPager.setCurrentItem(current + 1);
             } else {
-                // Last screen reached, launch main activity
-                launchMainActivity();
+                // Last screen reached, launch lock setting activity
+                launchLockSettingActivity();
                 markOnboardingAsCompleted();
             }
         });
+    }
+    
+    private void showWelcomeDialog() {
+        FragmentManager fragmentManager = getSupportFragmentManager();
+        WelcomeDialogFragment welcomeDialog = new WelcomeDialogFragment();
+        welcomeDialog.show(fragmentManager, "WelcomeDialogFragment");
     }
     
     private ViewPager2.OnPageChangeCallback pageChangeCallback = new ViewPager2.OnPageChangeCallback() {
@@ -82,13 +98,14 @@ public class OnboardingActivity extends BaseActivity {
         public void onPageSelected(int position) {
             updateDotIndicators(position);
             
+            // Show/hide previous button based on position
+            skipButton.setVisibility(position == 0 ? View.GONE : View.VISIBLE);
+            
             // Change button text on last screen
             if (position == layouts.length - 1) {
                 nextButton.setText(R.string.get_started);
-                skipButton.setVisibility(View.GONE);
             } else {
                 nextButton.setText(R.string.next);
-                skipButton.setVisibility(View.VISIBLE);
             }
         }
     };
@@ -136,8 +153,8 @@ public class OnboardingActivity extends BaseActivity {
         prefs.edit().putBoolean("onboarding_completed", true).apply();
     }
     
-    private void launchMainActivity() {
-        Intent intent = new Intent(OnboardingActivity.this, MainPagerActivity.class);
+    private void launchLockSettingActivity() {
+        Intent intent = new Intent(OnboardingActivity.this, LockSettingActivity.class);
         startActivity(intent);
         finish();
     }
